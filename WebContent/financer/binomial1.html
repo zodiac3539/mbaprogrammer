@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+Keep in mind that ,as this is not the in depth discussion about finance, I would like to focus on R code more.<br />
+<div>
+<br /></div>
+<b>[The concept of Option]</b><br />
+It is right to buy or sell a stock. It has call-option and put-option. Call option refers to the right to buy a stock. I want to limit the discussion within the call-option for the sake of the simplicity.<br />
+<br />
+<b>[Payoff]</b><br />
+It has an exercise price. If the stock price gets higher than the exercise price, the option starts to pay off.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://www.sec.gov/Archives/edgar/data/1053092/000089109213004721/a53788x6x1.jpg" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" src="http://www.sec.gov/Archives/edgar/data/1053092/000089109213004721/a53788x6x1.jpg" height="198" width="400" /></a></div>
+<div style="font-family: Helvetica; font-size: 12px; line-height: normal;">
+<br /></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+Again, it's the right to buy a stock at a certain price. If the exercise price is less than current stock price, the option becomes useless. If the exercise is higher than the current stock price, the option pays off. For example, Let's suppose that I buy a option whose exercise price is $100. If the stock price becomes $110, and then I exercise the option, I can get $10. (The underlying assumption is that I will sell the stock immediately, if it is profitable) If the stock price becomes $90, I don't exercise my option, which make itself useless. That's why the option pay-off has a linear graph like above.<br />
+<br />
+<b>[How do we value the option]</b><br />
+<br />
+Black-scholes model is the most popular. But, I want to touch on black-scholes model later. The binomial option pricing model was a great foundation of black-scholes model. Just like other finance models, it needs to simplify the real-life situation. Then, we are going to expand the model into the area similar to the real-life model. It has only two cases - either stock price goes up or down. There is no "no change." Let's assume that our stock price is $100. And there's 50:50 chance to make $10 or lose $10. We can intuitively draw this diagram.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://3.bp.blogspot.com/-R0laENNOwvQ/VvSk-XF4xlI/AAAAAAAAFok/x1GBUuJhYo8mXTVPLwN285z8GHWSAGO1A/s1600/Binomial%2Boption%2Bpricing.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="360" src="https://3.bp.blogspot.com/-R0laENNOwvQ/VvSk-XF4xlI/AAAAAAAAFok/x1GBUuJhYo8mXTVPLwN285z8GHWSAGO1A/s640/Binomial%2Boption%2Bpricing.png" width="640" /></a></div>
+<br />
+I limited the time horizon to T=3 (You can expand more). Now, I would like to translate this financial model to R. It's not easy task as you imagine. Finally, we are going to draw the tree at the end of the chapter. First, we need another mathematical model.<br />
+<br />
+Volatility = How much volatile stock is. (Apple in 2015 was 21%)<br />
+U = the stock price when stock price goes up = exp(volatility)<br />
+D = the stock price when stock price goes down = exp(-volatility)<br />
+R = the risk free interest rate to calculate the time value of the money.<br />
+S = Stock price ($100 in this case)<br />
+E = Exercise price (Also $100 for the sake of the simplicity)<br />
+<br />
+<div>
+Plus, we are going to use library "igraph" to draw the tree. In order to draw the tree, we need to build an algorithm called binary tree search. However, in this case, we are going to draw the simple 3-level tree that has indices like below. In next post, I'll touch on binary tree search algorithm. You can learn a lot through this post - Finance, Algorithm, and R. It's fascinating! Please, visit my blog more often. I'll fill out the amazing information that you want.</div>
+<div>
+<br /></div>
+<div>
+Here's my code.</div>
+<div>
+<br /></div>
+<b>[Code]</b><br />
+#Binomial option pricing<br />
+#U = exp(volatility)<br />
+#D = exp(-volatility)<br />
+#p = 0.5 (We have the equal chance of making or losing money)<br />
+#Risk free rate = 0.02 =&gt; exp(0.02)<br />
+#For those who are not familiar with data structure, I deliberately used just array.<br />
+#I'll make a new code for those who are familiar with tree data structure<br />
+<br />
+library(igraph)<br />
+G &lt;- graph.tree(n=7, children=2) #I'll make a graph whose nodes are 7, and each node has two children<br />
+rate &lt;- exp(0.02)<br />
+volatility &lt;- 0.2<br />
+exercise_price &lt;- 100<br />
+<br />
+a &lt;- NULL<br />
+a[1] &lt;- 100 #Time0<br />
+a[2] &lt;- 100 * exp(volatility) #Time1 when the stock price goes up<br />
+a[3] &lt;- 100 * exp(-volatility) #Time1 when the stock price goes down<br />
+a[4] &lt;- a[2] * exp(volatility) #Time2 Up-Up<br />
+a[5] &lt;- a[2] * exp(-volatility) #Time2 Up-Down<br />
+a[6] &lt;- a[3] * exp(volatility) #Time2 Down-up<br />
+a[7] &lt;- a[3] * exp(-volatility) #Time2 Down-down =&gt; worst case<br />
+<br />
+V(G)$name &lt;- round(a) #Name of the tree<br />
+lay &lt;- layout.reingold.tilford(G) #It's tree. You can try other shape with other layout options<br />
+plot(G, layout=lay, vertex.size=50, edge.arrow.size=0.5) #Draw the tree.<br />
+<br />
+#As opposed to the stock price, the option pricing starts out with end nodes (bottom nodes)<br />
+#I already explained the logic. Just follow it from one by one.<br />
+option_price&lt;-(1:7)<br />
+for(i in 4:7) {<br />
+&nbsp; after_option &lt;- a[i] - exercise_price<br />
+<br />
+&nbsp; if( after_option &gt;0 ) {<br />
+&nbsp; &nbsp; option_price[i] &lt;- after_option<br />
+&nbsp; } else {<br />
+&nbsp; &nbsp; option_price[i] &lt;- 0<br />
+&nbsp; }<br />
+}<br />
+<br />
+#I assumed that the each case(price up &amp; price down) has an equal chance 50:50<br />
+#Let's get an expectation from them<br />
+option_price[2]&lt;-(0.5*option_price[4]+0.5*option_price[5])/rate<br />
+option_price[3]&lt;-(0.5*option_price[6]+0.5*option_price[7])/rate<br />
+option_price[1]&lt;-(0.5*option_price[2]+0.5*option_price[3])/rate<br />
+<br />
+V(G)$name &lt;- round(option_price)<br />
+plot(G, layout=lay, vertex.size=50, edge.arrow.size=0.5)<br />
+<br />
+<b>[Outcome]</b><br />
+&lt;Stock Price&gt;<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-evABnfuk56A/VvSlRbu_NvI/AAAAAAAAFoo/JMLP6MHeJ8M4tlRAmR_oQuHhNYBDFD93w/s1600/Stock.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="313" src="https://1.bp.blogspot.com/-evABnfuk56A/VvSlRbu_NvI/AAAAAAAAFoo/JMLP6MHeJ8M4tlRAmR_oQuHhNYBDFD93w/s400/Stock.png" width="400" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+&lt;Corresponding Option Price&gt;<br />
+<div class="separator" style="clear: both; text-align: left;">
+<a href="https://2.bp.blogspot.com/-twCfYDmpzJI/VvSlXw_K7hI/AAAAAAAAFos/nEdgL-8EZH8gv7K37lT66lme517FUwlQQ/s1600/Options.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="313" src="https://2.bp.blogspot.com/-twCfYDmpzJI/VvSlXw_K7hI/AAAAAAAAFos/nEdgL-8EZH8gv7K37lT66lme517FUwlQQ/s400/Options.png" width="400" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+The conclusion is that this option's theoretical value is $12.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>
+

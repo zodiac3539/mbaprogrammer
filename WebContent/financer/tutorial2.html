@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<div style="text-align: center;">
+<b>Tutorial of R (2)</b></div>
+<div style="text-align: center;">
+<br /></div>
+<div>
+<br /></div>
+<div>
+Previous Posts</div>
+<div>
+<a href="./tutorial1.html">Tutorial 1 - basic data types, function, iteration...</a><br />
+<br />
+<div>
+<b>[Logical Flow]</b></div>
+<div>
+<br /></div>
+<div>
+If you want to control logical flow you can use if ~ else statement just like other languages. I'll skip detailing explanation. Seeing code a lot more make sense to you.<br />
+<br />
+<span style="background-color: yellow;">&gt; is_positive &lt;- function(x) {</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; if(x &gt; 0) {</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; &nbsp; &nbsp; print("It's positive")</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; } else if(x == 0) {</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; &nbsp; &nbsp; print("It's Zero")</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; } else {</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; &nbsp; &nbsp; print("It's negative")</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; }</span><br />
+<span style="background-color: yellow;">+ }</span><br />
+<br />
+<span style="background-color: yellow;">&gt; is_positive(3)</span><br />
+[1] "It's positive"<br />
+<span style="background-color: yellow;">&gt; is_positive(0)</span><br />
+[1] "It's Zero"<br />
+<span style="background-color: yellow;">&gt; is_positive(-1)</span><br />
+[1] "It's negative"<br />
+&gt;&nbsp;</div>
+<br /></div>
+<div>
+<b>[Data Read &amp; Write]</b></div>
+<div>
+<br /></div>
+<div>
+We can't type all the data. Eventually, we need to download them or extract them from our database.&nbsp;</div>
+<div>
+R can read csv and other files, as well as excel file. Here's some functions that allow you to read and write file.</div>
+<div>
+<br /></div>
+<div>
+<i><u>&lt;Directory&gt;</u></i></div>
+<div>
+First, you need to choose the directory(aka folder) that you want to work on.</div>
+<div>
+<div>
+<span style="background-color: yellow;">&gt; getwd()</span></div>
+<div>
+[1] "/Users/seokbongchoi"</div>
+</div>
+<div>
+<br /></div>
+<div>
+FYI. If you are a window user, you can still use "/" as a directory delimiter.</div>
+<div>
+<br /></div>
+<div>
+If you want to change the directory that you want to work on, you can use "setwd" command.</div>
+<div>
+<br /></div>
+<div>
+<div class="p1">
+<span style="background-color: yellow;">&gt; setwd("/Users/seokbongchoi/Documents/FinanceInR")</span></div>
+<div class="p1">
+<br /></div>
+<div class="p1">
+<i><u>&lt;CSV File Read&gt;</u></i></div>
+<div class="p1">
+Let's start of with csv file. Please, make csv file like below.</div>
+<div class="p1">
+filename: test.csv</div>
+<div class="p1">
+column1,column2</div>
+<div class="p1">
+0,1</div>
+<div class="p1">
+2,3</div>
+<div class="p1">
+3,4</div>
+<div class="p1">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-LFv6fW2anTU/VwBTm1Ac9gI/AAAAAAAAFrg/ST6KqFNttnALKMZd4SvsIo-4YzzUTuOnQ/s1600/Screen%2BShot%2B2016-04-02%2Bat%2B7.19.34%2BPM.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="113" src="https://1.bp.blogspot.com/-LFv6fW2anTU/VwBTm1Ac9gI/AAAAAAAAFrg/ST6KqFNttnALKMZd4SvsIo-4YzzUTuOnQ/s320/Screen%2BShot%2B2016-04-02%2Bat%2B7.19.34%2BPM.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+Please save the file at the folder that you used "setwd()"</div>
+<div class="separator" style="clear: both; text-align: left;">
+Then, we can read this file.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both;">
+<span style="background-color: yellow;">&gt; mydata&lt;-read.csv("test.csv") #You can use full name "/Users/username/Documents/test.csv"</span></div>
+<div class="separator" style="clear: both;">
+Warning message:</div>
+<div class="separator" style="clear: both;">
+In read.table(file = file, header = header, sep = sep, quote = quote, &nbsp;:</div>
+<div class="separator" style="clear: both;">
+&nbsp; incomplete final line found by readTableHeader on 'test.csv'</div>
+<div class="separator" style="clear: both;">
+<span style="background-color: yellow;">&gt; mydata</span></div>
+<div class="separator" style="clear: both;">
+&nbsp; column1 column2</div>
+<div class="separator" style="clear: both;">
+1 &nbsp; &nbsp; &nbsp; 0 &nbsp; &nbsp; &nbsp; 1</div>
+<div class="separator" style="clear: both;">
+2 &nbsp; &nbsp; &nbsp; 2 &nbsp; &nbsp; &nbsp; 3</div>
+<div class="separator" style="clear: both;">
+3 &nbsp; &nbsp; &nbsp; 3 &nbsp; &nbsp; &nbsp; 4</div>
+<div class="separator" style="clear: both;">
+&gt;&nbsp;</div>
+<div class="separator" style="clear: both;">
+<br /></div>
+<div class="separator" style="clear: both;">
+You successfully read that file.</div>
+<div class="p1">
+<br /></div>
+<div class="p1">
+You can also store file with "write.csv"</div>
+<div class="p1">
+&gt; write.csv(information_table, file="information_table.csv")</div>
+<div class="p1">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-H0gavoaDnyk/VwBU4kcRJJI/AAAAAAAAFrs/8oam23uoJfQ9c8jqpB73SB7TfbUX4wrMQ/s1600/Screen%2BShot%2B2016-04-02%2Bat%2B7.25.03%2BPM.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" src="https://2.bp.blogspot.com/-H0gavoaDnyk/VwBU4kcRJJI/AAAAAAAAFrs/8oam23uoJfQ9c8jqpB73SB7TfbUX4wrMQ/s1600/Screen%2BShot%2B2016-04-02%2Bat%2B7.25.03%2BPM.png" /></a></div>
+<div class="p1">
+<br /></div>
+<div class="p1">
+<br /></div>
+<div class="p1">
+<br /></div>
+<div class="p1">
+<br /></div>
+</div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+What if it is on the internet? You just need to add "url" function.</div>
+<div>
+<br /></div>
+<div>
+<div>
+<span style="background-color: yellow;">&gt; iris &lt;- read.csv(url("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"), header = FALSE) #There are great sample data offered by UCI. Let's use this!</span></div>
+<div>
+&gt;&nbsp;</div>
+<div>
+<span style="background-color: yellow;">&gt; head(iris)</span></div>
+<div>
+&nbsp; &nbsp;V1 &nbsp;V2 &nbsp;V3 &nbsp;V4 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;V5</div>
+<div>
+1 5.1 3.5 1.4 0.2 Iris-setosa</div>
+<div>
+2 4.9 3.0 1.4 0.2 Iris-setosa</div>
+<div>
+3 4.7 3.2 1.3 0.2 Iris-setosa</div>
+<div>
+4 4.6 3.1 1.5 0.2 Iris-setosa</div>
+<div>
+5 5.0 3.6 1.4 0.2 Iris-setosa</div>
+<div>
+6 5.4 3.9 1.7 0.4 Iris-setosa</div>
+</div>
+<div>
+<br /></div>
+<div>
+head() function allows you to see top 5 rows in the data. tail() allows you to see bottom 5 rows.</div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<i><u>&lt;Excel File Read&gt;</u></i></div>
+<div>
+In order to read excel file, you need to install external package library. You can do this with "install.packages" instruction. You should download "gdata" package</div>
+<div>
+<br /></div>
+<div>
+<div>
+<span style="background-color: yellow;">&gt; install.packages("gdata")</span></div>
+<div>
+&nbsp; % Total &nbsp; &nbsp;% Received % Xferd &nbsp;Average Speed &nbsp; Time &nbsp; &nbsp;Time &nbsp; &nbsp; Time &nbsp;Current</div>
+<div>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dload &nbsp;Upload &nbsp; Total &nbsp; Spent &nbsp; &nbsp;Left &nbsp;Speed</div>
+<div>
+&nbsp; 0 &nbsp; &nbsp; 0 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp; &nbsp; &nbsp;0 &nbsp; &nbsp; &nbsp;0 --:--:-- --:--:-- --:--:-- &nbsp; &nbsp; 0 &nbsp;4 1106k &nbsp; &nbsp;4 50600 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp; 184k &nbsp; &nbsp; &nbsp;0 &nbsp;0:00:05 --:--:-- &nbsp;0:00:05 &nbsp;184k100 1106k &nbsp;100 1106k &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp;1828k &nbsp; &nbsp; &nbsp;0 --:--:-- --:--:-- --:--:-- 1826k</div>
+<div>
+<br /></div>
+<div>
+The downloaded binary packages are in</div>
+<div>
+<span class="Apple-tab-span" style="white-space: pre;"> </span>/var/folders/54/5hcnnr_12m1bj167mv61gf3w0000gn/T//Rtmps8bNOL/downloaded_packages</div>
+</div>
+<div>
+<br /></div>
+<div>
+Read &amp; Write are pretty much same as csv file. The only difference is the instruction. (This time, I would encourage you to make simple excel file like I used in CSV example)</div>
+<div>
+<br /></div>
+<div>
+In order to fully use the library you need to declare like below</div>
+<div>
+<span style="background-color: yellow;">&gt; library(gdata)</span></div>
+<div>
+<br /></div>
+<div>
+Then, you can use functions in that library. (By the way, library is nothing but a collection of functions made by third party)</div>
+<div>
+<br /></div>
+<div>
+<div>
+<span style="background-color: yellow;">&gt; my.data &lt;- read.xls("test_excel.xlsx")</span></div>
+<div>
+<span style="background-color: yellow;">&gt; my.data</span></div>
+<div>
+&nbsp; Column1 Column2</div>
+<div>
+1 &nbsp; &nbsp; &nbsp; 1 &nbsp; &nbsp; &nbsp; 3</div>
+<div>
+2 &nbsp; &nbsp; &nbsp; 2 &nbsp; &nbsp; &nbsp; 4</div>
+<div>
+3 &nbsp; &nbsp; &nbsp; 3 &nbsp; &nbsp; &nbsp; 5</div>
+</div>
+<div>
+<br /></div>
+<div>
+<b>[String Manipulation]</b></div>
+<div>
+<br /></div>
+<div>
+I think the data science consists of 4 parts.</div>
+<div>
+(1) Data Gathering</div>
+<div>
+(2) Data Manipulation</div>
+<div>
+(3) Data Visualization</div>
+<div>
+(4) Data Interpretation</div>
+<div>
+<br /></div>
+<div>
+Each part is equally important. But, in R, sometimes, data manipulation is more important than others. This is because when you gather information from Internet, it is likely to be a string type. You need to slice or merge them to make it more meaningful. Here are some string functions that enable you to manipulate strings.</div>
+<div>
+<br /></div>
+<div>
+<i><u>&lt;Concatenation&gt;</u></i></div>
+<div>
+Unfortunately, it is not as easy to concatenate strings as other languages. "paste" can be used when you concatenate strings.</div>
+<div>
+<br /></div>
+<div>
+<div>
+<span style="background-color: yellow;">&gt; sentence &lt;- paste("I am", " a boy.")</span></div>
+<div>
+<span style="background-color: yellow;">&gt; sentence &lt;- paste(sentence, "You are a girl")</span></div>
+<div>
+<span style="background-color: yellow;">&gt; sentence</span></div>
+<div>
+[1] "I am &nbsp;a boy. You are a girl"</div>
+</div>
+<div>
+<br /></div>
+<div>
+<i><u>&lt;Replace String&gt;</u></i></div>
+<div>
+When you want to replace string gsub can work. Keep in mind that this is a regular expression. Basically you can put down whatever you want as a single word, but if that has some formula, you would need to study regular expression further.<br />
+<br />
+<span style="background-color: yellow;">&gt; sentence &lt;- "I am a boy. You are a girl"</span><br />
+<span style="background-color: yellow;">&gt; sentence_fixed &lt;- gsub(pattern="a boy", replacement="boys", sentence)</span><br />
+<span style="background-color: yellow;">&gt; sentence_fixed</span><br />
+[1] "I am boys. You are a girl"<br />
+<br />
+But, what if we want to change "a boy" and "a girl" to a student? That's where regular expression comes into play.<br />
+<br />
+<span style="background-color: yellow;">&gt; sentence &lt;- "I am a boy. You are a girl"</span><br />
+<span style="background-color: yellow;">&gt; sentence_fixed &lt;- gsub(pattern="((a boy)|(a girl))", replacement="a student", sentence)</span><br />
+<span style="background-color: yellow;">&gt; sentence_fixed</span><br />
+<br />
+"|" means "OR"<br />
+<div>
+<br /></div>
+<div>
+<i><u>&lt;substring&gt; LEFT / RIGHT function in Excel</u></i></div>
+<div>
+Although R has its built-in function "substr" but I found that using external string library makes it easier for you to manipulate the string.<br />
+<br />
+Let's install "stringr" package with install.packages("stringr")<br />
+str_sub(string, start, end)<br />
+<br />
+&gt; library(stringr)<br />
+&gt; sentence&lt;-("Test1Test2")<br />
+&gt; str_sub(sentence, 1, 4)<br />
+[1] "Test"<br />
+&gt; str_sub(sentence, 1, 5)<br />
+[1] "Test1"<br />
+&gt; str_sub(sentence, 2, 4)<br />
+[1] "est"<br />
+<br />
+You can use negative number as an index. In that case, it means, "start from the end of the string"<br />
+<br />
+&gt; str_sub(sentence, -1, -1)<br />
+[1] "2"<br />
+&gt; str_sub(sentence, -4, -1)<br />
+[1] "est2"<br />
+&gt; str_sub(sentence, -5, -1)<br />
+[1] "Test2"</div>
+</div>
+<div>
+<br />
+Next Tutorial - How to manipulate the data frame, Basic statistics, Basic plotting a graph.<br />
+<a href="./tutorial3.html">[R Tutorial 3]</a><br />
+<br />
+<br />
+<br /></div>
+<div>
+<br /></div>
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

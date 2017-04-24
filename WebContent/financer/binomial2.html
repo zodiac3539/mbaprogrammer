@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<div>
+In previous blog, we focused on the option. I assume our readers understand option, as well as binomial option pricing. If you can't recall, you may visit previous post one more time.</div>
+<div>
+<br /></div>
+<div>
+<a href="http://www.mbaprogrammer.com/2016/03/binomial-option-pricing-in-r.html">Binomial option pricing in R &amp; visualization of tree structure (1)</a></div>
+<div>
+<br /></div>
+Let's continue our discussion. Our previous code has two problems<br />
+<div>
+<br /></div>
+<div>
+(1) We can't expand the three more than 3 depth.</div>
+<div>
+(2) Do we really need to type each option pricing case?</div>
+<div>
+<br /></div>
+<div>
+Both problems look critical. That's why we adopt one coding principle - Refactoring. Programming pursues laziness. Programmers tend not to type too much and want his code to be adapted in any situation. There is a way to get away from this issue. We can use mathematical trick to implement this code.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-xquw7nNYTnE/VvahDKzDKLI/AAAAAAAAFpU/jMRE9_V8sPofHzZLAWbFLsWGBtIEr1FCg/s1600/Binomial%2Boption%2Bpricing%2B%2528tree%2529.jpg" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img alt="" border="0" height="225" src="https://4.bp.blogspot.com/-xquw7nNYTnE/VvahDKzDKLI/AAAAAAAAFpU/jMRE9_V8sPofHzZLAWbFLsWGBtIEr1FCg/s400/Binomial%2Boption%2Bpricing%2B%2528tree%2529.jpg" title="" width="400" /></a></div>
+<br />
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+As you can see, in order to represent the children's index, we can simply multiply parent's index by 2 or add 2. The reason why we can use this mathematical trick is that it's binary tree. Each node has two children always. Now let's beef up our code.<br />
+<br />
+<b>[Code]</b><br />
+#Binomial option pricing (2)<br />
+#We can expand the tree to more than 3rd depth.<br />
+#U = exp(volatility)<br />
+#D = exp(-volatility)<br />
+#p = 0.5 (We have the equal chance of making or losing money)<br />
+#Risk free rate = 0.02 =&gt; exp(0.02)<br />
+#For those who are not familiar with data structure, I deliberately used just array.<br />
+#I'll make a new code for those who are familiar with tree data structure<br />
+<br />
+library(igraph)<br />
+<br />
+#Define the variable<br />
+depth&lt;-5 #How many steps (tree depth) do you want to make<br />
+upside_probability&lt;-0.5 #The chance that the stop price goes up<br />
+rate &lt;- exp(0.02) #Risk Free rate<br />
+volatility &lt;- 0.2<br />
+exercise_price &lt;- 100<br />
+stock_price &lt;- 100<br />
+<br />
+total_node&lt;-2^depth-1 #Total number of node<br />
+G &lt;- graph.tree(n=total_node, children=2) #I'll make a graph whose nodes are 7, and each node has two children<br />
+stock_tree &lt;- (1:total_node)<br />
+<br />
+stock_tree[1]&lt;-stock_price<br />
+tree_traverse &lt;- 2^(depth-1) -1<br />
+<br />
+for(i in 1:tree_traverse) {<br />
+&nbsp; &nbsp; #We are going to use mathematical trick to represent tree.<br />
+&nbsp; &nbsp; stock_tree[i*2] &lt;- stock_tree[i] * exp(volatility)<br />
+&nbsp; &nbsp; stock_tree[i*2 + 1] &lt;- stock_tree[i] * exp(-volatility)<br />
+}<br />
+<br />
+V(G)$name &lt;- round(stock_tree) #Name of the tree<br />
+lay &lt;- layout.reingold.tilford(G) #It's tree. You can try other shape with other layout options<br />
+plot(G, layout=lay, vertex.size=15, edge.arrow.size=0.1) #Draw the tree.<br />
+<br />
+#As opposed to the stock price, the option pricing starts out with end nodes (bottom nodes)<br />
+#I already explained the logic. Just follow it from one by one.<br />
+option_price&lt;-(1:total_node)<br />
+bottom_node&lt;-tree_traverse + 1<br />
+<br />
+#In order to value the option, we need to calculate bottom line first.<br />
+for(i in bottom_node:total_node) {<br />
+&nbsp; after_option &lt;- stock_tree[i] - exercise_price<br />
+&nbsp;<br />
+&nbsp; if( after_option &gt;0 ) {<br />
+&nbsp; &nbsp; option_price[i] &lt;- after_option<br />
+&nbsp; } else {<br />
+&nbsp; &nbsp; option_price[i] &lt;- 0<br />
+&nbsp; }<br />
+}<br />
+<br />
+#Discount it back to current time while considering the probabilty of up and down<br />
+for(i in tree_traverse:1) {<br />
+&nbsp; &nbsp; option_price[i]&lt;-upside_probability*option_price[i*2]<br />
+&nbsp; &nbsp; option_price[i]&lt;-option_price[i]+(1-upside_probability)*option_price[i*2+1]<br />
+&nbsp; &nbsp; option_price[i]&lt;-option_price[i]/rate<br />
+}<br />
+<br />
+V(G)$name &lt;- round(option_price)<br />
+plot(G, layout=lay, vertex.size=15, edge.arrow.size=0.1)<br />
+<br />
+[Output]<br />
+&lt;For stock price&gt;<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-YSYjMg79kMk/VvaiRCJ_v-I/AAAAAAAAFpg/iiLYs6sQ7d0YMBmQIXSwEVEPOrD8vTu1w/s1600/Screen%2BShot%2B2016-03-26%2Bat%2B10.51.40%2BAM.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="357" src="https://1.bp.blogspot.com/-YSYjMg79kMk/VvaiRCJ_v-I/AAAAAAAAFpg/iiLYs6sQ7d0YMBmQIXSwEVEPOrD8vTu1w/s400/Screen%2BShot%2B2016-03-26%2Bat%2B10.51.40%2BAM.png" width="400" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+&lt;For option price: $18&gt;<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-8KA3OmCA72I/VvaiceXumfI/AAAAAAAAFpk/kYnBTx39J00-eJNnKbVX2dADVmYV5vpzw/s1600/Screen%2BShot%2B2016-03-26%2Bat%2B10.51.30%2BAM.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="367" src="https://4.bp.blogspot.com/-8KA3OmCA72I/VvaiceXumfI/AAAAAAAAFpk/kYnBTx39J00-eJNnKbVX2dADVmYV5vpzw/s400/Screen%2BShot%2B2016-03-26%2Bat%2B10.51.30%2BAM.png" width="400" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br /></div>
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>
+s

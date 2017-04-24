@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<b>[Previous lecture]</b><br />
+<span style="color: #222222; font-family: &quot;arial&quot; , &quot;tahoma&quot; , &quot;helvetica&quot; , &quot;freesans&quot; , sans-serif;"><a href="./histogram.html">Getting stock volatility in R &amp; Getting Histogram of returns</a></span><br />
+<b><br /></b>
+<b>[Single&nbsp;Regression]</b><br />
+Single Regression is the most powerful tool to identify linear relationship between x and y, if we assume that there is a linear relationship between them. Basically, it is assumed that both have relationship like below.<br />
+<br />
+y = ax&nbsp;+ b<br />
+<br />
+What we want to know is a and b. Then, we can predict y value with just x value. However, it doesn't explain which causes which. y could cause x or x could cause y. We don't know with single regression technique. Thus, this technique is not almighty. Please keep in mind that.<br />
+<br />
+<b>[The relationship between Exxon Mobile equity and WTI crude oil price]</b><br />
+Let's formulate a hypothesis first. In my mind, it is common sense that there is a positive linear (or log, square, whatever) relationship between WTI and Exxon Mobile equity value. As the oil price goes up, so does the profit of Exxon. We are going to validate our hypothesis through actual linear regression.<br />
+What we are going to do is<br />
+(1) Getting data from the internet<br />
+(2) Transform the data into the one that can be calculated<br />
+(3) Plot the scatter plot<br />
+(4) The single regression analysis<br />
+Let's take a look at the code.<br />
+<br />
+<b>[Code]</b><br />
+#Single Regression and Covariance<br />
+#Let's figure out the relationship between WTI and Stock price of exxon<br />
+#You can download the data from https://research.stlouisfed.org/fred2/series/DCOILWTICO/downloaddata<br />
+#I store the data in download folder you can change it.<br />
+<br />
+library(tseries)<br />
+library(zoo) #Time series data type<br />
+<br />
+xom &lt;- get.hist.quote("XOM", #Tick mark<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;start="2015-01-01", #Start date YYYY-MM-DD<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end="2015-12-31" #End date YYYY-MM-DD<br />
+)<br />
+<br />
+#I am going to use close value only<br />
+xom_zoo &lt;- xom$Close<br />
+<br />
+#Plese download the file from stlouisfed<br />
+#Limit the range from 2015-01-01 to 2015-12-31 to compare it apple to apple<br />
+wti &lt;- read.csv("/Users/seokbongchoi/Downloads/DCOILWTICO.csv")<br />
+#When it reads file first, it has categorical format we need to convert it.<br />
+wti$VALUE &lt;- as.character(wti$VALUE)<br />
+#It also has garbage value "." in data. You can see in Excel. We can clean this with below command<br />
+wti &lt;- wti[wti$VALUE!=".", #Get rid of any value that contains "."<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1:2 #I need first column, and second column as well.<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;]<br />
+#Finally I want to convert character to numeric value.<br />
+wti$VALUE &lt;- as.numeric(wti$VALUE)<br />
+#We need to convert the data into the time series<br />
+wti_zoo &lt;- read.zoo(wti, format="%Y-%m-%d")<br />
+<br />
+#What we need is return.<br />
+xom_rate &lt;- (xom_zoo - lag(xom_zoo))/xom_zoo<br />
+wti_rate &lt;- (wti_zoo - lag(wti_zoo))/wti_zoo<br />
+<br />
+regression_result &lt;- lm(xom_rate~wti_rate)<br />
+<br />
+plot(y=xom_rate,<br />
+&nbsp; &nbsp; &nbsp;x=wti_rate,<br />
+&nbsp; &nbsp; &nbsp;pch=19, #I want to use dot<br />
+&nbsp; &nbsp; &nbsp;cex = .5, #The size of dot<br />
+&nbsp; &nbsp; &nbsp;main="The regression between Exxon &amp; WTI in 2015",<br />
+&nbsp; &nbsp; &nbsp;ylab="Exxon return",<br />
+&nbsp; &nbsp; &nbsp;xlab="WTI return"<br />
+&nbsp; &nbsp; &nbsp;)<br />
+abline(regression_result, col="red") # regression line (y~x)<br />
+<br />
+print(summary(regression_result))<br />
+<br />
+<b>[Output]</b><br />
+<i><u>&lt;Summary for regression&gt;</u></i><br />
+Call:<br />
+lm(formula = xom_rate ~ wti_rate)<br />
+<br />
+Residuals:<br />
+&nbsp; &nbsp; &nbsp; Min &nbsp; &nbsp; &nbsp; &nbsp;1Q &nbsp; &nbsp;Median &nbsp; &nbsp; &nbsp; &nbsp;3Q &nbsp; &nbsp; &nbsp; Max<br />
+-0.059637 -0.006658 &nbsp;0.000426 &nbsp;0.006674 &nbsp;0.038156<br />
+<br />
+Coefficients:<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Estimate Std. Error t value Pr(&gt;|t|) &nbsp; <br />
+(Intercept) 0.0003544 &nbsp;0.0007800 &nbsp; 0.454 &nbsp; &nbsp; 0.65 &nbsp; <br />
+wti_rate &nbsp; &nbsp;0.2483610 &nbsp;0.0264306 &nbsp; 9.397 &nbsp; &lt;2e-16 ***<br />
+---<br />
+Signif. codes: &nbsp;0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1<br />
+<br />
+Residual standard error: 0.01235 on 249 degrees of freedom<br />
+Multiple R-squared: &nbsp;0.2618,<span class="Apple-tab-span" style="white-space: pre;"> </span>Adjusted R-squared: &nbsp;0.2588<br />
+F-statistic: &nbsp;88.3 on 1 and 249 DF, &nbsp;p-value: &lt; 2.2e-16<br />
+<div>
+<br /></div>
+<i><u>&lt;Plot&gt;</u></i><br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://3.bp.blogspot.com/-LCfHE6C5fjM/VvshlIx5WuI/AAAAAAAAFqc/5_o6pp9BOK0Qk_xLFXzu3kEws1uLZSGUQ/s1600/singler.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="295" src="https://3.bp.blogspot.com/-LCfHE6C5fjM/VvshlIx5WuI/AAAAAAAAFqc/5_o6pp9BOK0Qk_xLFXzu3kEws1uLZSGUQ/s400/singler.png" width="400" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<b>[Interpretation]</b><br />
+It is more important to know how to analyze the result of regression.<br />
+<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Estimate &nbsp; &nbsp;Std. Error &nbsp;t-value &nbsp;Pr(&gt;|t|) &nbsp; <br />
+(Intercept) <span style="background-color: yellow;">0.0003544</span> &nbsp;0.0007800 &nbsp; 0.454 &nbsp; &nbsp; 0.65 &nbsp; <br />
+wti_rate &nbsp; &nbsp;0.2483610 &nbsp;0.0264306 &nbsp; 9.397 &nbsp; <span style="background-color: yellow;">&lt;2e-16</span> ***<br />
+<br />
+So we found the value of a and b<br />
+a = 0.2483610<br />
+b = 0.0003544<br />
+So, our equation has a form like,<br />
+y = 0.2483610 x&nbsp;+ 0.0003544<br />
+Thus, the return on oil price has a linear relationship with the stock value of Exxon.<br />
+<br />
+It is noted that p value is less than 2*10^-16. The rule of thumb is that if it is less than 0.05, this regression analysis can be reliable.&nbsp;p-value for constant&nbsp;is not significant. <br />
+Adjusted R square is 0.2588. 25.88% of the variability in this graph can be explained by our model. About 75% variability cannot be explained by this model, meaning that there are more variables needed to fully account for the equity value of Exxon (You can name it. Leverage ratio, revenue, profit, ...)<br />
+<br />
+However, in the equity value, 25% variability accounts for really big chunk. We continue to this conversation for multi-regression analysis.<br />
+<br />
+<b>[Next Post]</b><br />
+<a href="./multigregression.html">Multi regression between Exxon Mobil stock and WTI/Natural Gas/S&amp;P 500</a><br />
+<br />
+<br />
+<br />
+<br />
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

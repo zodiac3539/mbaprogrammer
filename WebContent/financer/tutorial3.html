@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<b>[Previous Post]</b><br />
+<a href="./tutorial1.html">R tutorial (1)</a><br />
+<a href="./tutorial2.html">R tutorial (2)</a><br />
+<br />
+<b>[Add or remove the data point from the data frame]</b><br />
+Now, it's time to look at how to manipulate the data frame. On top of 'sapply' there are many ways to manipulate the data frame<br />
+<br />
+<i><u>&lt;rbind - merge two data frames into one&gt;</u></i><br />
+<span style="background-color: yellow;"><br /></span>
+<span style="background-color: yellow;">&gt; information_table &lt;- data.frame(</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; month=c("1m", "3m", "6m"),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; libor_rate=c(0.01, 0.02, 0.03),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; tbill_rate=c(0.015, 0.022, 0.033)</span><br />
+<span style="background-color: yellow;">+ )</span><br />
+&gt;<br />
+<span style="background-color: yellow;">&gt; add_table &lt;- data.frame(</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; month=c("12m", "18m"),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; libor_rate=c(0.04, 0.05),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; tbill_rate=c(0.045, 0.055)</span><br />
+<span style="background-color: yellow;">+ )</span><br />
+<span style="background-color: yellow;">&gt; information_table &lt;- rbind(information_table, add_table)</span><br />
+<span style="background-color: yellow;">&gt; information_table</span><br />
+<span style="background-color: yellow;">&nbsp; month libor_rate tbill_rate</span><br />
+<span style="background-color: yellow;">1 &nbsp; &nbsp;1m &nbsp; &nbsp; &nbsp; 0.01 &nbsp; &nbsp; &nbsp;0.015</span><br />
+<span style="background-color: yellow;">2 &nbsp; &nbsp;3m &nbsp; &nbsp; &nbsp; 0.02 &nbsp; &nbsp; &nbsp;0.022</span><br />
+<span style="background-color: yellow;">3 &nbsp; &nbsp;6m &nbsp; &nbsp; &nbsp; 0.03 &nbsp; &nbsp; &nbsp;0.033</span><br />
+<span style="background-color: yellow;">4 &nbsp; 12m &nbsp; &nbsp; &nbsp; 0.04 &nbsp; &nbsp; &nbsp;0.045</span><br />
+<span style="background-color: yellow;">5 &nbsp; 18m &nbsp; &nbsp; &nbsp; 0.05 &nbsp; &nbsp; &nbsp;0.055</span><br />
+&gt;<br />
+<br />
+<i><u>&lt;cbind - if you want to add one additional column on the data frame&gt;</u></i><br />
+<br />
+<span style="background-color: yellow;">&gt; information_table &lt;- data.frame(</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; month=c("1m", "3m", "6m"),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; libor_rate=c(0.01, 0.02, 0.03),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; tbill_rate=c(0.015, 0.022, 0.033)</span><br />
+<span style="background-color: yellow;">+ )</span><br />
+<span style="background-color: yellow;">&gt; add_column &lt;- data.frame(</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; rprate=c(0.01, 0.022, 0.031)</span><br />
+<span style="background-color: yellow;">+ )</span><br />
+<span style="background-color: yellow;">&gt;</span><br />
+<span style="background-color: yellow;">&gt; information_table &lt;- cbind(information_table, add_column)</span><br />
+<span style="background-color: yellow;">&gt; information_table</span><br />
+&nbsp; month libor_rate tbill_rate rprate<br />
+1 &nbsp; &nbsp;1m &nbsp; &nbsp; &nbsp; 0.01 &nbsp; &nbsp; &nbsp;0.015 &nbsp;0.010<br />
+2 &nbsp; &nbsp;3m &nbsp; &nbsp; &nbsp; 0.02 &nbsp; &nbsp; &nbsp;0.022 &nbsp;0.022<br />
+3 &nbsp; &nbsp;6m &nbsp; &nbsp; &nbsp; 0.03 &nbsp; &nbsp; &nbsp;0.033 &nbsp;0.031<br />
+&gt;<br />
+<br />
+<i><u>&lt;delete&gt;</u></i><br />
+You can just use "-" operator to get rid of the column.<br />
+<span style="background-color: yellow;">&gt; information_table &lt;- information_table[-3,] #Get rid of 3rd row</span><br />
+<span style="background-color: yellow;">&gt; information_table</span><br />
+&nbsp; month libor_rate tbill_rate<br />
+1 &nbsp; &nbsp;1m &nbsp; &nbsp; &nbsp; 0.01 &nbsp; &nbsp; &nbsp;0.015<br />
+2 &nbsp; &nbsp;3m &nbsp; &nbsp; &nbsp; 0.02 &nbsp; &nbsp; &nbsp;0.022<br />
+<span style="background-color: yellow;">&gt; information_table &lt;- information_table[,-1] #Get rid of 1st column</span><br />
+<span style="background-color: yellow;">&gt; information_table</span><br />
+&nbsp; libor_rate tbill_rate<br />
+1 &nbsp; &nbsp; &nbsp; 0.01 &nbsp; &nbsp; &nbsp;0.015<br />
+2 &nbsp; &nbsp; &nbsp; 0.02 &nbsp; &nbsp; &nbsp;0.022<br />
+&gt;<br />
+<div>
+<br /></div>
+<br />
+<b>[Basic stats for your data]</b><br />
+<br />
+Now, it's time to use actual data. We are going to use the stock price history of Apple in 2015. In order to do that, please, install "tseries" first.<br />
+<span style="background-color: yellow;">&gt; install.packages("tseries")</span><br />
+<span style="background-color: yellow;">&gt; library(tseries)</span><br />
+<span style="background-color: yellow;">&gt; aapl &lt;- get.hist.quote("AAPL", #Tick mark</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;start="2015-01-01", #Start date YYYY-MM-DD</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end="2015-12-31" #End date YYYY-MM-DD</span><br />
+<span style="background-color: yellow;">+ )</span><br />
+<br />
+% Total &nbsp; &nbsp;% Received % Xferd &nbsp;Average Speed &nbsp; Time &nbsp; &nbsp;Time &nbsp; &nbsp; Time &nbsp;Current<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dload &nbsp;Upload &nbsp; Total &nbsp; Spent &nbsp; &nbsp;Left &nbsp;Speed<br />
+&nbsp; 0 &nbsp; &nbsp; 0 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp; &nbsp; &nbsp;0 &nbsp; &nbsp; &nbsp;0 --:--:-- --:--:-- --:--:-- &nbsp; &nbsp; 0100 &nbsp;6157 &nbsp; &nbsp;0 &nbsp;6157 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp;67931 &nbsp; &nbsp; &nbsp;0 --:--:-- --:--:-- --:--:-- 67659100 18323 &nbsp; &nbsp;0 18323 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp; 171k &nbsp; &nbsp; &nbsp;0 --:--:-- --:--:-- --:--:-- &nbsp;170k<br />
+time series starts 2015-01-02<br />
+<br />
+<span style="background-color: yellow;">&gt; head(aapl)</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Open &nbsp; High &nbsp; &nbsp;Low &nbsp;Close<br />
+2015-01-02 111.39 111.44 107.35 109.33<br />
+2015-01-05 108.29 108.65 105.41 106.25<br />
+2015-01-06 106.54 107.43 104.63 106.26<br />
+2015-01-07 107.20 108.20 106.70 107.75<br />
+2015-01-08 109.23 112.15 108.70 111.89<br />
+2015-01-09 112.67 113.25 110.21 112.01<br />
+<br />
+As it is a series of prices, it has opening price, high price, low price, and closing price. What really matter to us is closing price. Actually, when we talk that "the stock price goes up", we imply that "that was a closing price."<br />
+<br />
+<i><u>&lt;Summary&gt;</u></i><br />
+You can see the summarized information as to the data frame.<br />
+<br />
+<span style="background-color: yellow;">&gt; summary(aapl)</span><br />
+&nbsp; &nbsp; &nbsp;Index &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Open &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; High &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Low &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Close &nbsp; &nbsp; <br />
+&nbsp;Min. &nbsp; :2015-01-02 &nbsp; Min. &nbsp; : 94.87 &nbsp; Min. &nbsp; :107.0 &nbsp; Min. &nbsp; : 92.0 &nbsp; Min. &nbsp; :103.1 <br />
+&nbsp;1st Qu.:2015-04-05 &nbsp; 1st Qu.:113.17 &nbsp; 1st Qu.:114.4 &nbsp; 1st Qu.:112.0 &nbsp; 1st Qu.:113.4 <br />
+&nbsp;Median :2015-07-04 &nbsp; Median :120.80 &nbsp; Median :121.6 &nbsp; Median :119.3 &nbsp; Median :120.3 <br />
+&nbsp;Mean &nbsp; :2015-07-03 &nbsp; Mean &nbsp; :120.18 &nbsp; Mean &nbsp; :121.2 &nbsp; Mean &nbsp; :118.9 &nbsp; Mean &nbsp; :120.0 <br />
+&nbsp;3rd Qu.:2015-10-01 &nbsp; 3rd Qu.:127.14 &nbsp; 3rd Qu.:127.9 &nbsp; 3rd Qu.:126.0 &nbsp; 3rd Qu.:126.9 <br />
+&nbsp;Max. &nbsp; :2015-12-31 &nbsp; Max. &nbsp; :134.46 &nbsp; Max. &nbsp; :134.5 &nbsp; Max. &nbsp; :131.4 &nbsp; Max. &nbsp; :133.0 <br />
+<br />
+&lt;Min&gt;<br />
+From now on, we are going to use closing price. See if these data are consistent with summary data.<br />
+<span style="background-color: yellow;">&gt; min(aapl$Close)</span><br />
+[1] 103.12<br />
+<br />
+&lt;Max&gt;<br />
+<span style="background-color: yellow;">&gt; max(aapl$Close)</span><br />
+[1] 133<br />
+<br />
+&lt;Mean&gt;<br />
+<span style="background-color: yellow;">&gt; mean(aapl$Close)</span><br />
+[1] 120.04<br />
+<br />
+&lt;Median&gt;<br />
+<span style="background-color: yellow;">&gt; median(aapl$Close)</span><br />
+[1] 120.3<br />
+<br />
+<b>[Drawing the basic graph]</b><br />
+<br />
+Please, don't remove the variable aapl. We are going to keep using this to draw simple graph.<br />
+It's simple. If it has a time-series, just one command.<br />
+<br />
+<span style="background-color: yellow;">&gt; plot(aapl$Close)</span><br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-3Vs40faXD2M/Vwvd8tUJu8I/AAAAAAAAFuM/l1XBCcAIs-8equ9dqQZL3KMrVIW4ruYyw/s1600/apple.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="305" src="https://1.bp.blogspot.com/-3Vs40faXD2M/Vwvd8tUJu8I/AAAAAAAAFuM/l1XBCcAIs-8equ9dqQZL3KMrVIW4ruYyw/s400/apple.png" width="400" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+In case that you choose the data frame, you should give the information about which one is on x-axis, and which one is on a y-axis.<br />
+<br />
+<span style="background-color: yellow;">&gt; information_table &lt;- data.frame(</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; month=c("1m", "3m", "6m"),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; libor_rate=c(0.01, 0.02, 0.03),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; tbill_rate=c(0.015, 0.022, 0.033)</span><br />
+<span style="background-color: yellow;">+ )</span><br />
+<span style="background-color: yellow;">&gt; plot(x=information_table$month, y=information_table$libor_rate)</span><br />
+#X-Axis: Month, Y-axis: Libor Rate<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-vyZC8TIkEac/VwvezCOLvNI/AAAAAAAAFuY/TZXtC9F06o8EcXvmsxNaO2k-VkebtqQNQ/s1600/libor01.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="244" src="https://4.bp.blogspot.com/-vyZC8TIkEac/VwvezCOLvNI/AAAAAAAAFuY/TZXtC9F06o8EcXvmsxNaO2k-VkebtqQNQ/s320/libor01.png" width="320" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<a href="./annuity.html">Annuity post</a> has a lot of techniques about how to represent the data that we have for beginners. I encourage you to read this article for further information and training.<br />
+<br />
+<br />
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+Well, seeing is believing. Let's watch Youtube video to master what we've learn through R tutorial.<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<iframe allowfullscreen="" class="YOUTUBE-iframe-video" data-thumbnail-src="https://i.ytimg.com/vi/T4Hn6taTOM0/0.jpg" frameborder="0" height="532" src="https://www.youtube.com/embed/T4Hn6taTOM0?feature=player_embedded" width="640"></iframe></div>
+<br />
+<br />
+As I mentioned in the video, please use "pnorm" function to calculate the normal distribution. "dnorm" function calculates just density function suitable for drawing actual normal distribution curve.<br />
+<br />
+<b>[Code]</b><br />
+<br />
+#Black Scholes Model<br />
+<br />
+s&lt;-100 #Stock Price<br />
+x&lt;-105 #Exercise Price<br />
+t&lt;-1 #Expiration Date<br />
+sigma&lt;-0.2 #Volatility<br />
+rfree&lt;-0.03 #Risk Free Rate<br />
+<br />
+d1&lt;-(log(s/x) + rfree * t)/(sigma*sqrt(t)) + sigma*sqrt(t)/2<br />
+d2&lt;-d1 - sigma*sqrt(t)<br />
+<br />
+c&lt;-s*pnorm(d1)-exp(-rfree*t)*x*pnorm(d2)<br />
+<div>
+<br /></div>
+<div>
+<br /></div>
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

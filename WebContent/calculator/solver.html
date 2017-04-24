@@ -1,0 +1,649 @@
+
+<HTML>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<Script>
+function doit() {
+    input_num = document.calc.input_num.value;
+    output_num = infixToPostfixRe(input_num);
+        
+    document.calc.output_num.value = output_num;
+    
+}
+Array.prototype.peek = function () {
+  return this[this.length - 1];
+};
+
+function infixToPostfixRe(reStr) {
+
+  var output = [];
+  var stack = [];
+  var op = [];
+  var str = '';
+  var numinthis = true;
+
+  var previousaction = '';
+  reStr = reStr.replace(/\(\-/g, '(0-'); //e^(-0.5) => e^(0-0.5) Stack calculator can't recognize negative number.
+  reStr = reStr.replace(/ln\(/g, '1l('); //For ln function
+  reStr = reStr.replace(/zscore\(/g, '1z('); //For z-score function
+  reStr = reStr.replace(/sqrt\(/g, '1r('); //For z-score function
+  //âˆš
+  
+  for (var k = 0, length = reStr.length; k < length;  k++) {
+
+    // current char
+    var c = reStr[k];
+
+    if (c == '(') {
+    
+    	stack.push(c);
+    	//if(reStr[k+1]=='-') {
+    	//    str = str + '-';
+    	//    reStr[k+1] = '0';
+    	//}
+    
+    } else if (c == ')') {
+	
+		if(str != '') {
+			output.push(str);
+			str = '';
+			numinthis = false;
+    	}
+    
+      	while (stack.peek() != '(' && stack.length > 0) {
+        	output.push(stack.pop());
+      	}
+    
+      	stack.pop();
+
+    } else if (c == ' ') {
+         if(str != '') {
+             output.push(str);
+             str = '';
+             numinthis = false;
+         }
+ 
+    } else {
+        if(c == '1' ||
+    		  c == '2' ||
+    		  c == '3' ||
+    		  c == '4' ||
+    		  c == '5' ||
+    		  c == '6' ||
+    		  c == '7' ||
+    		  c == '8' ||
+    		  c == '9' ||
+    		  c == '0' ||
+    		  c == 'x' ||
+    		  c == '.') {
+    		
+    		  
+    		//if(c == 'â€“') c = '-';
+         	str = str + c;
+          	numinthis = true;
+          	if(k==length-1) {
+            	  output.push(str);
+         	}
+      } else if(c == 'e') {
+          tmp = Math.exp(1);
+          output.push(tmp);
+          numinthis = true;
+      } else {
+          if(str != '') {
+              output.push(str);
+              str = '';
+          }
+          numinthis = false;
+      }
+      //â€“
+	  if(numinthis == false) {
+		while (stack.length) {
+    		var peekedChar = stack.peek();
+
+        	var peekedCharPrecedence = precedenceOf(peekedChar);
+        	var currentCharPrecedence = precedenceOf(c);
+
+        	if (peekedCharPrecedence >= currentCharPrecedence) {
+          		output.push(stack.pop());
+        	} else {
+          		break;
+        	}
+        }
+      	stack.push(c);
+     }
+
+  	}
+  } // end for loop
+
+  while (stack.length)
+    output.push(stack.pop());
+
+  while (output.length)
+      op.push(output.pop());
+  var result = op.join(" ");
+  console.log(result);
+  //!dontPrint && console.log(reStr, "=>", result);
+
+
+    
+    //Actual Calculation
+    var xmin = parseFloat(document.calc.xmin.value);
+    var xmax = parseFloat(document.calc.xmax.value);
+    
+    //Bisection interpolation
+    
+    var step = (xmax - xmin)/2;
+    var step_old = step;
+    console.log('initial step');
+    console.log(step);
+    //result = 1000;
+    var canfindanswer = false;
+    
+    //while(Math.abs(result) < 0.0001) {
+
+    //} //End while for solver
+    
+    xmintest = calculate(clone(op), xmin); 
+    if(xmintest == 0) return xmin;
+    xmaxtest = calculate(clone(op), xmax); 
+    if(xmaxtest == 0) return xmax;
+    
+    outputstr = '<font color=red>f(x) min: '+xmintest+' f(x) max: '+xmaxtest+'</font>';
+    document.getElementById('log').innerHTML = outputstr;
+    
+    var results = 1000;
+    var max_trial = 6000;
+    var trial = 0;
+    var epsillon = 0.000001
+    //var epsillon = Number.EPSILON;
+    var nevergobelow = true;
+    if(xmintest == Number.POSITIVE_INFINITY) {
+        console.log('Infinity Case');
+        current_step = xmax - epsillon;
+        nevergobelow = true;
+    } else {
+        current_step = xmin + epsillon;
+    }
+    
+		    
+    var incremental = 1.05;
+    
+    x1 = [];
+    y1 = [];
+    k = 0;
+    
+    while(trial < max_trial) {
+        //console.log('current step');
+        //console.log(step);
+        results =  calculate(clone(op), current_step); 
+        preslope = calculate(clone(op), current_step+epsillon);
+        derivative = (preslope - results)/epsillon;
+        if(y1[k] != Number.POSITIVE_INFINITY && y1[k] != Number.NEGATIVE_INFINITY) {
+	        x1[k] = current_step;
+    	    y1[k] = results;
+       		 k++;
+        }
+        //
+        //incremental = 1 + Math.abs(derivative);
+        
+        if(derivative > 1) {
+            incremental = 1.05;
+        } else if(derivative > 0.5) {
+            incremental = 1.1;
+        } else if(Math.abs(results) > 0.25) {
+            incremental = 1.25;
+        } else {
+        	//if(step > 0.5) step = 0.5;
+            incremental = 1.4;
+        }
+        
+        if(derivative > 5) incremental = 1.01;
+        
+        positive = true;
+        if(Math.abs(results) < epsillon) {
+            canfindanswer = true;
+            solver = current_step;
+            break;
+        } else if( derivative > 0 ) {
+            if(results > 0) positive = false;
+            else positive = true;            
+        } else {
+            if(results > 0) positive = true;
+            else positive = false;
+        }
+        if( positive == true ) current_step = current_step + step;
+        else { 
+            current_step = current_step - step;
+            if(nevergobelow == true && current_step < xmin) {
+                current_step = xmin + step;
+            }
+        }
+        step = step / incremental;
+        trial++;
+    } //End while for solver
+
+    var data = new google.visualization.DataTable();
+    data.addColumn('number', 'x');
+    data.addColumn('number', 'y');
+	for(i=0;i<x1.length;i++) {
+		data.addRows([
+ 	        [x1[i], y1[i]]
+            ]);
+		}
+        var options = {
+          title: 'none',
+          hAxis: {title: 'x', minValue: -1, maxValue: 8},
+          vAxis: {title: 'y', minValue: -1, maxValue: 8},
+          pointSize: 3,
+          legend: 'none'
+        };
+
+        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+
+    if(canfindanswer == true) {
+        solver = solver * 1000000;
+        solver = Math.round(solver);
+        solver = solver / 1000000;
+        return solver;
+    } else {
+        return "Unable to Find the answer";
+    }
+
+  return results;
+}
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+function xkorea(str, xval) {
+    if(str=='x') return xval;
+    else {
+        return parseFloat(str);
+    }    
+}
+
+function calculate(op0, xval) {
+    
+    var result_stack = [];	
+    var result = 0;
+    var op1,op2 = 0;
+    var temp_result = 0;
+    
+    if(op0.length == 1) {
+        tmp = op0.pop();
+        return parseFloat(tmp);
+    }
+    
+    while(op0.length) {        
+        	tmp = op0.pop();	
+  	    	 op1 = 0;
+  	 	     op2 = 0;
+  	 	     
+        
+		if(tmp == '+' ||
+		   tmp == 'l' ||
+		   tmp == 'z' ||
+		   tmp == 'r' ||
+		   tmp == '*' ||
+		   tmp == '/' ||
+		   tmp == '^') {
+		   
+		    op1 = xkorea(result_stack.pop(), xval);
+		    op2 = xkorea(result_stack.pop(), xval);
+		    operator = tmp;
+		} else if(tmp == '-') {
+		    if(result_stack.length > 1) {
+		    	op1 = xkorea(result_stack.pop(), xval);
+		    	op2 = xkorea(result_stack.pop(), xval);
+		    	operator = tmp;
+		    } else {
+		        op2 = 0;
+		        op1 = xkorea(result_stack.pop(), xval);
+		    	operator = tmp;
+		    }
+		} else {
+			operator = '|';
+			result_stack.push(tmp);
+		}
+		  
+	        if(operator == '+') {
+  	          temp_result = op1 + op2;
+ 	           result_stack.push(temp_result);
+	        } else if(operator == '-') {
+    	    	temp_result = op2 - op1;
+    	        result_stack.push(temp_result);
+  	      } else if(operator == '*') {
+				temp_result = op1 * op2;
+				result_stack.push(temp_result);
+    	    } else if(operator == '/') {
+				temp_result = op2 / op1;
+				result_stack.push(temp_result);
+        } else if(operator == '^') {
+			temp_result = Math.pow(op2,op1);
+			result_stack.push(temp_result);
+        } else if(operator == 'l') {
+        	temp_result = Math.log(op1);
+            result_stack.push(temp_result);
+        } else if(operator == 'z') {
+        	temp_result = GetZPercent(op1);
+            result_stack.push(temp_result);
+        } else if(operator == 'r') {
+        	temp_result = Math.pow(op1, 0.5);
+            result_stack.push(temp_result);
+        } else if(operator == '|') {
+            //result_stack.push(temp_result);
+        } else {
+        }
+       
+        if(op0.length == 0) {
+            result = temp_result;
+            break;
+        }
+    } // End While For Calc
+    return result;
+}
+
+// precedence
+
+var precedenceMap = {
+  '(': 1,
+  '-': 2, 
+  '+': 2, 
+  '/': 3, 
+  '*': 3, 
+  'z': 4,
+  '^': 4,
+  'l': 4, //Log
+  'r': 4, //Log
+  
+  // else 5
+
+};
+
+function precedenceOf(c) {
+  return precedenceMap[c] || 5;
+}
+
+function addthat(obj) {
+    document.calc.input_num.value = document.calc.input_num.value + obj.value;
+}
+function clears() {
+	document.calc.input_num.value = '';
+}
+function del() {
+    txt = document.calc.input_num.value;
+    if(txt.length > 0) {
+        txt = txt.substring(0, txt.length-1);
+    }
+    document.calc.input_num.value = txt;
+}
+function clickx() {
+	document.calc.input_num.value = document.calc.input_num.value
+	 + document.calc.xvalue.value;
+}
+function outputx() {
+	 document.calc.xvalue.value=document.calc.output_num.value;
+}
+function calculatelog() {
+    document.calc.input_num.value = document.calc.input_num.value + 'ln(';
+    //output_num = infixToPostfixRe(input_num);  
+    //document.calc.output_num.value = Math.log(output_num);
+}
+function showhelp(obj) {
+    if(obj.value == 'Show Help') {
+        document.getElementById("help_table").style.display = "";
+        obj.value = 'Hide Help';
+    } else {
+        document.getElementById("help_table").style.display = "none";
+        obj.value = 'Show Help';
+
+    }
+}
+function addz() {
+    document.calc.input_num.value = document.calc.input_num.value + 'zscore(';
+}
+function addexp() {
+    document.calc.input_num.value = document.calc.input_num.value + 'e^(';
+}
+function sqrt() {
+//âˆš
+    document.calc.input_num.value = document.calc.input_num.value + 'sqrt(';
+}
+
+function GetZPercent(z) 
+  {
+    //z == number of standard deviations from the mean
+
+    //if z is greater than 6.5 standard deviations from the mean
+    //the number of significant digits will be outside of a reasonable 
+    //range
+    if ( z < -6.5)
+      return 0.0;
+    if( z > 6.5) 
+      return 1.0;
+
+    var factK = 1;
+    var sum = 0;
+    var term = 1;
+    var k = 0;
+    var loopStop = Math.exp(-23);
+    while(Math.abs(term) > loopStop) 
+    {
+      term = .3989422804 * Math.pow(-1,k) * Math.pow(z,k) / (2 * k + 1) / Math.pow(2,k) * Math.pow(z,k+1) / factK;
+      sum += term;
+      k++;
+      factK *= k;
+
+    }
+    sum += 0.5;
+
+    return sum;
+  }
+function fillex() {
+    document.calc.input_num.value = 'x^2-2*x+1';
+    document.calc.xmin.value = '0';
+	document.calc.xmax.value = '10';
+	    
+}
+// tests
+</script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    var x = [];
+    var y = [];
+    x[0] = 0;
+    y[0] = 0;
+    
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+          var data = new google.visualization.DataTable();
+          data.addColumn('number', 'y');
+          data.addColumn('number', 'x');
+		for(i=0;i<x.length;i++) {
+		data.addRows([
+ 	        [x[i], y[i]]
+            ]);
+		}
+        var options = {
+          title: 'x y graph',
+          hAxis: {title: 'y', minValue: 0, maxValue: 15},
+          vAxis: {title: 'x', minValue: 0, maxValue: 15},
+          pointSize: 3,
+          legend: 'none'
+        };
+
+        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+      }
+    </script>
+<STYLE>
+.inputbox {
+    width: 290px;
+    border: 1px solid #CCC;
+    height: 35px;
+    font-size: 12pt;
+}
+.smallinput {
+    width: 50px;
+    border: 1px solid #CCC;
+    height: 35px;
+    font-size: 12pt;
+}
+.outputbox {
+    width: 150 px;
+    border: 1px solid #CCC;
+    height: 30px;
+    font-size: 12pt;
+}
+
+.buttonbox {
+    width: 52px;
+    border: 1px solid #CCC;
+    background-color: #FFFFFF;
+    height: 45px;
+    font-size: 12pt;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+}
+.flexbox {
+    border: 1px solid #CCC;
+    background-color: #FFFFFF;
+    height: 45px;
+    font-size: 12pt;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+}
+.btn2 {
+    width: 80px;
+    border: 1px solid #CCC;
+    background-color: #FFFFFF;
+    height: 30px;
+    font-size: 10pt;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+}     
+</STYLE>
+</head>
+
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+<BR>
+<Script src="../js/calmenu.js"></Script>
+<BR>
+<BR>
+Ver 0.81 <a href="http://www.mbaprogrammer.com/p/zodiac-solver-version-note.html">(Version Note)</a><BR>
+<BR>
+<form name="calc">
+Input (assume your input = 0) <a href="javascript:fillex();">(Example)</a><BR>
+<Input type="text" name="input_num" class="inputbox"><BR>
+<BR>
+Solution: x=<Input type="text" name="output_num" class="outputbox"><BR>
+where initial trial x>=<Input type="text" name="xmin" value="0" class="smallinput"> 
+and x<=<Input type="text" name="xmax" value="10" class="smallinput"><BR>
+<BR>
+<div id="log"></div><BR>
+
+</form>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="C" onclick="clears()" class="buttonbox">
+<Input type="Button" Value="x" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="ln" onclick="calculatelog()" class="buttonbox">
+<Input type="Button" Value="sqrt" onclick="sqrt()" class="buttonbox">
+<Input type="Button" Value="del" onclick="del()" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="1" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="2" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="3" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="+" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="-" onclick="addthat(this)" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="4" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="5" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="6" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="*" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="/" onclick="addthat(this)" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="7" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="8" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="9" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="(" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value=")" onclick="addthat(this)" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="." onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="0" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="e" onclick="addexp()" class="buttonbox">
+<Input type="Button" Value="^" onclick="addthat(this)" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" id="solveit" Value="Solve Eq" onclick="doit()" class="flexbox" style="background-color:#ffffe6">
+<Input type="Button" Value="ZScore" onclick="addz()" class="flexbox">
+<BR>
+<div id="chart_div" style="width: 315px; height: 315px;"></div><BR>
+<BR>
+<input type="button" name="help" value="Show Help" onclick="showhelp(this);">
+<TABLE width="300" id="help_table" style="display:none;">
+<TR>
+<TD>
+First of all, this solver doesn't seek the exact answer<BR>
+It might have an error in 1/1000 scale<BR>
+Please keep in mind<BR>
+<BR>
+<B>1. Polynomial</B><BR>
+<BR>
+If you want to find the answer of the equation<BR>
+<img src="eq01.png"><BR>
+Please, type this<BR>
+<BR>
+x^2-2*x+1<BR>
+along with initial trial x>=0 and x<=5<BR>
+It is automatically assumed that your right side of equation is 0<BR>
+The answer is<BR>
+<BR>
+0.999<BR>
+<BR>
+The exact answer is 1. Again, this solver tries the answer extensively<BR>
+But, you can have the sense of the root of the equation<BR>
+<BR>
+<BR>
+<B>2. IRR</B><BR>
+<BR>
+Let's assume that we invest $100 at T=0 and<BR>
+We can expect cash flow $50 at T=1, $60 at T=2, $80 at T=3<BR>
+And thus, equation is like below<BR>
+<img src="eq02.png"><BR>
+Please, type this<BR>
+<BR>
+50/(1+x)+60/(1+x)^2+80/(1+x)^3-100<BR>
+along with initial trial x>=0 and x<=1<BR>
+It is automatically assumed that your right side of equation is 0<BR>
+Click "Solve Eq" Button. You can get the answer is<BR>
+<BR>
+0.367 (=36.7%)<BR>
+<BR>
+</TD>
+</TR>
+</TABLE>
+
+
+  <script src="../js/tools.js"></script>
+  </div>
+</BODY>
+</HTML>

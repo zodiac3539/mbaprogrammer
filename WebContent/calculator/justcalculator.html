@@ -1,0 +1,544 @@
+
+<HTML>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<Script>
+
+function doit() {
+    input_num = document.calc.input_num.value;
+    output_num = infixToPostfixRe(input_num);
+        
+    document.calc.output_num.value = output_num;
+    
+}
+Array.prototype.peek = function () {
+  return this[this.length - 1];
+};
+
+function infixToPostfixRe(reStr) {
+
+  var output = [];
+  var stack = [];
+  var op = [];
+  var str = '';
+  var numinthis = true;
+
+  var previousaction = '';
+  reStr = reStr.replace(/\(\-/g, '(0-'); //e^(-0.5) => e^(0-0.5) Stack calculator can't recognize negative number.
+  reStr = reStr.replace(/ln\(/g, '1l('); //For ln function
+  reStr = reStr.replace(/zscore\(/g, '1z('); //For z-score function
+  reStr = reStr.replace(/sqrt\(/g, '1r('); //For Square Root function
+  reStr = reStr.replace(/zreverse\(/g, '1v(');
+  
+  //√
+  
+  for (var k = 0, length = reStr.length; k < length;  k++) {
+
+    // current char
+    var c = reStr[k];
+
+    if (c == '(') {
+    
+    	stack.push(c);
+    	//if(reStr[k+1]=='-') {
+    	//    str = str + '-';
+    	//    reStr[k+1] = '0';
+    	//}
+    
+    } else if (c == ')') {
+	
+		if(str != '') {
+			output.push(str);
+			str = '';
+			numinthis = false;
+    	}
+    
+      	while (stack.peek() != '(' && stack.length > 0) {
+        	output.push(stack.pop());
+      	}
+    
+      	stack.pop();
+
+    } else if (c == ' ') {
+         if(str != '') {
+             output.push(str);
+             str = '';
+             numinthis = false;
+         }
+ 
+    } else {
+        if(c == '1' ||
+    		  c == '2' ||
+    		  c == '3' ||
+    		  c == '4' ||
+    		  c == '5' ||
+    		  c == '6' ||
+    		  c == '7' ||
+    		  c == '8' ||
+    		  c == '9' ||
+    		  c == '0' ||
+    		  c == '.') {
+    		
+    		  
+    		//if(c == '–') c = '-';
+         	str = str + c;
+          	numinthis = true;
+          	if(k==length-1) {
+            	  output.push(str);
+         	}
+      } else if(c == 'e') {
+          tmp = Math.exp(1);
+          output.push(tmp);
+          numinthis = true;
+      } else {
+          if(str != '') {
+              output.push(str);
+              str = '';
+          }
+          numinthis = false;
+      }
+      //–
+	  if(numinthis == false) {
+		while (stack.length) {
+    		var peekedChar = stack.peek();
+
+        	var peekedCharPrecedence = precedenceOf(peekedChar);
+        	var currentCharPrecedence = precedenceOf(c);
+
+        	if (peekedCharPrecedence >= currentCharPrecedence) {
+          		output.push(stack.pop());
+        	} else {
+          		break;
+        	}
+        }
+      	stack.push(c);
+     }
+
+  	}
+  } // end for loop
+
+  while (stack.length)
+    output.push(stack.pop());
+
+  while (output.length)
+      op.push(output.pop());
+  var result = op.join(" ");
+  console.log(result);
+  //!dontPrint && console.log(reStr, "=>", result);
+
+    var result_stack = [];	
+    var result = 0;
+    var op1,op2 = 0;
+    var temp_result = 0;
+    
+    if(op.length == 1) {
+        tmp = op.pop();
+        return parseFloat(tmp);
+    }
+    
+    while(op.length) {        
+        tmp = op.pop();
+        op1 = 0;
+        op2 = 0;
+        
+		if(tmp == '+' ||
+		   tmp == 'l' ||
+		   tmp == 'z' ||
+		   tmp == 'r' ||
+		   tmp == 'v' ||
+		   tmp == '*' ||
+		   tmp == '/' ||
+		   tmp == '^') {
+		    op1 = parseFloat(result_stack.pop());
+		    op2 = parseFloat(result_stack.pop());
+		    operator = tmp;
+		} else if(tmp == '-') {
+		    if(result_stack.length > 1) {
+		    	op1 = parseFloat(result_stack.pop());
+		    	op2 = parseFloat(result_stack.pop());
+		    	operator = tmp;
+		    } else {
+		        op2 = 0;
+		        op1 = parseFloat(result_stack.pop());
+		    	operator = tmp;
+		    }
+		} else {
+		    operator = '|';
+		    result_stack.push(tmp);
+		}
+		  
+        if(operator == '+') {
+            temp_result = op1 + op2;
+            result_stack.push(temp_result);
+        } else if(operator == '-') {
+        	temp_result = op2 - op1;
+            result_stack.push(temp_result);
+        } else if(operator == '*') {
+			temp_result = op1 * op2;
+			result_stack.push(temp_result);
+        } else if(operator == '/') {
+			temp_result = op2 / op1;
+			result_stack.push(temp_result);
+        } else if(operator == '^') {
+			temp_result = Math.pow(op2,op1);
+			result_stack.push(temp_result);
+        } else if(operator == 'l') {
+        	temp_result = Math.log(op1);
+            result_stack.push(temp_result);
+        } else if(operator == 'z') {
+        	temp_result = GetZPercent(op1);
+            result_stack.push(temp_result);
+        } else if(operator == 'v') {
+        	temp_result = critz(op1);
+            result_stack.push(temp_result);
+        } else if(operator == 'r') {
+        	temp_result = Math.pow(op1, 0.5);
+            result_stack.push(temp_result);
+        } else if(operator == '|') {
+            //result_stack.push(temp_result);
+        } else {
+            //alert('Invalid operator:'+operator);
+            //return;
+        }
+       
+        if(op.length == 0) {
+            result = temp_result;
+            break;
+        }
+    }
+
+  return result;
+}
+
+// precedence
+
+var precedenceMap = {
+  '(': 1,
+  '-': 2, 
+  '+': 2, 
+  '/': 3, 
+  '*': 3, 
+  'z': 4,
+  '^': 4,
+  'l': 4, //Log
+  'r': 4, //squareroot
+  'v': 4 //zreverse
+  
+  // else 5
+
+};
+
+function precedenceOf(c) {
+  return precedenceMap[c] || 5;
+}
+
+function addthat(obj) {
+    document.calc.input_num.value = document.calc.input_num.value + obj.value;
+}
+function clears() {
+	document.calc.input_num.value = '';
+}
+function del() {
+    txt = document.calc.input_num.value;
+    if(txt.length > 0) {
+        txt = txt.substring(0, txt.length-1);
+    }
+    document.calc.input_num.value = txt;
+}
+function clickx() {
+	document.calc.input_num.value = document.calc.input_num.value
+	 + document.calc.xvalue.value;
+}
+function outputx() {
+	 document.calc.xvalue.value=document.calc.output_num.value;
+}
+function calculatelog() {
+    document.calc.input_num.value = document.calc.input_num.value + 'ln(';
+    //output_num = infixToPostfixRe(input_num);  
+    //document.calc.output_num.value = Math.log(output_num);
+}
+function showhelp(obj) {
+    if(obj.value == 'Show Help') {
+        document.getElementById("help_table").style.display = "";
+        obj.value = 'Hide Help';
+    } else {
+        document.getElementById("help_table").style.display = "none";
+        obj.value = 'Show Help';
+
+    }
+}
+function addz() {
+    document.calc.input_num.value = document.calc.input_num.value + 'zscore(';
+}
+function addexp() {
+    document.calc.input_num.value = document.calc.input_num.value + 'e^(';
+}
+function sqrt() {
+//√
+    document.calc.input_num.value = document.calc.input_num.value + 'sqrt(';
+}
+function reversez() {
+    document.calc.input_num.value = document.calc.input_num.value + 'zreverse(';
+}
+    /*  The following JavaScript functions for calculating normal and
+        chi-square probabilities and critical values were adapted by
+        John Walker from C implementations
+        written by Gary Perlman of Wang Institute, Tyngsboro, MA
+        01879.  Both the original C code and this JavaScript edition
+        are in the public domain.  */
+
+    /*  POZ  --  probability of normal z value
+
+        Adapted from a polynomial approximation in:
+                Ibbetson D, Algorithm 209
+                Collected Algorithms of the CACM 1963 p. 616
+        Note:
+                This routine has six digit accuracy, so it is only useful for absolute
+                z values <= 6.  For z values > to 6.0, poz() returns 0.0.
+    */
+        var Z_MAX = 6;
+    function poz(z) {
+
+        var y, x, w;
+        
+        if (z == 0.0) {
+            x = 0.0;
+        } else {
+            y = 0.5 * Math.abs(z);
+            if (y > (Z_MAX * 0.5)) {
+                x = 1.0;
+            } else if (y < 1.0) {
+                w = y * y;
+                x = ((((((((0.000124818987 * w
+                         - 0.001075204047) * w + 0.005198775019) * w
+                         - 0.019198292004) * w + 0.059054035642) * w
+                         - 0.151968751364) * w + 0.319152932694) * w
+                         - 0.531923007300) * w + 0.797884560593) * y * 2.0;
+            } else {
+                y -= 2.0;
+                x = (((((((((((((-0.000045255659 * y
+                               + 0.000152529290) * y - 0.000019538132) * y
+                               - 0.000676904986) * y + 0.001390604284) * y
+                               - 0.000794620820) * y - 0.002034254874) * y
+                               + 0.006549791214) * y - 0.010557625006) * y
+                               + 0.011630447319) * y - 0.009279453341) * y
+                               + 0.005353579108) * y - 0.002141268741) * y
+                               + 0.000535310849) * y + 0.999936657524;
+            }
+        }
+        return z > 0.0 ? ((x + 1.0) * 0.5) : ((1.0 - x) * 0.5);
+    }
+
+
+    /*  CRITZ  --  Compute critical normal z value to
+                   produce given p.  We just do a bisection
+                   search for a value within CHI_EPSILON,
+                   relying on the monotonicity of pochisq().  */
+
+    function critz(p) {
+        var Z_EPSILON = 0.000001;     /* Accuracy of z approximation */
+        var minz = -Z_MAX;
+        var maxz = Z_MAX;
+        var zval = 0.0;
+        var pval;
+        if( p < 0.0 ) p = 0.0;
+        if( p > 1.0 ) p = 1.0;
+        
+        while ((maxz - minz) > Z_EPSILON) {
+            pval = poz(zval);
+            if (pval > p) {
+                maxz = zval;
+            } else {
+                minz = zval;
+            }
+            zval = (maxz + minz) * 0.5;
+        }
+        return(zval);
+    }
+
+function GetZPercent(z) 
+  {
+    //z == number of standard deviations from the mean
+
+    //if z is greater than 6.5 standard deviations from the mean
+    //the number of significant digits will be outside of a reasonable 
+    //range
+    if ( z < -6.5)
+      return 0.0;
+    if( z > 6.5) 
+      return 1.0;
+
+    var factK = 1;
+    var sum = 0;
+    var term = 1;
+    var k = 0;
+    var loopStop = Math.exp(-23);
+    while(Math.abs(term) > loopStop) 
+    {
+      term = .3989422804 * Math.pow(-1,k) * Math.pow(z,k) / (2 * k + 1) / Math.pow(2,k) * Math.pow(z,k+1) / factK;
+      sum += term;
+      k++;
+      factK *= k;
+
+    }
+    sum += 0.5;
+
+    return sum;
+  }
+// tests
+function fillex() {
+    document.calc.input_num.value = '1/1.03+1/1.03^2+1/1.03^3+sqrt(1)';
+    document.getElementById('equal').focus();
+    
+}
+</script>
+<STYLE>
+.inputbox {
+    width: 290px;
+    border: 1px solid #CCC;
+    font-size: 13pt;
+}
+.outputbox {
+    width: 200px;
+    border: 1px solid #CCC;
+    height: 30px;
+    font-size: 12pt;
+}
+
+.buttonbox {
+    width: 52px;
+    border: 1px solid #CCC;
+    background-color: #FFFFFF;
+    height: 45px;
+    font-size: 12pt;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+}
+.flexbox {
+    border: 1px solid #CCC;
+    background-color: #FFFFFF;
+    height: 45px;
+    font-size: 12pt;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+}
+.btn2 {
+    width: 80px;
+    border: 1px solid #CCC;
+    background-color: #FFFFFF;
+    height: 30px;
+    font-size: 10pt;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+}     
+</STYLE>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+<BR>
+<Script src="../js/calmenu.js"></Script>
+<BR>
+Ver 0.85 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://www.mbaprogrammer.com/p/version-note-for-just-calculator.html">(Version Note)</a><BR>
+<form name="calc">
+Input <a href="javascript:fillex();">(Example)</a><BR>
+<textarea rows="2" name="input_num" class="inputbox"></textarea><BR>
+<!--<Input type="text" name="input_num" class="inputbox"><BR>-->
+Output<BR>
+<Input type="text" name="output_num" class="outputbox">&nbsp;<Input type="Button" value="Output->V" onclick="outputx()" class="btn2"><BR>
+Stored Variable (V)<BR>
+<Input type="text" name="xvalue" value="0" class="outputbox"><BR>
+
+</form>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="C" onclick="clears()" class="buttonbox">
+<Input type="Button" Value="V" onclick="clickx()" class="buttonbox">
+<Input type="Button" Value="ln" onclick="calculatelog()" class="buttonbox">
+<Input type="Button" Value="sqrt" onclick="sqrt()" class="buttonbox">
+<Input type="Button" Value="del" onclick="del()" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="1" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="2" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="3" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="+" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="-" onclick="addthat(this)" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="4" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="5" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="6" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="*" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="/" onclick="addthat(this)" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="7" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="8" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="9" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="(" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value=")" onclick="addthat(this)" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="." onclick="addthat(this)" class="buttonbox">
+<Input type="Button" Value="0" onclick="addthat(this)" class="buttonbox">
+<Input type="Button" id="equal" Value="=" onclick="doit()" class="buttonbox">
+<Input type="Button" Value="e" onclick="addexp()" class="buttonbox">
+<Input type="Button" Value="^" onclick="addthat(this)" class="buttonbox">
+<BR>
+&nbsp;&nbsp;&nbsp;
+<Input type="Button" Value="ZScore" onclick="addz()" class="flexbox">
+<Input type="Button" Value="ZReverse" onclick="reversez()" class="flexbox">
+<BR>
+<BR>
+<input type="button" name="help" value="Show Help" onclick="showhelp(this);">
+<TABLE width="300" id="help_table" style="display:none;">
+<TR>
+<TD>
+How to use it and example.<BR>
+<BR>
+<B>1. NPV</B><BR>
+<BR>
+<img src="http://www.financeformulas.net/Formula%20Images/NPV%201.gif" width="300"><BR>
+Image is from financeformulas.net<BR>
+<BR>
+Cash flow T1=50, T2=50, T3=50<BR>
+Discount Rate 0.07<BR>
+Present value?<BR>
+<BR>
+50/1.07+50/1.07^2+50/1.07^3
+<BR>
+<BR>
+<B>2. Annuity</B><BR>
+<BR>
+<img src="http://www.financeformulas.net/formulaimages/FV%20of%20Annuity%201.gif" width="300"><BR>
+Image is from financeformulas.net<BR>
+<BR>
+Supposed P = 50, r = 0.05, n=10<BR>
+Discount rate 5%, Coupon payment $50, for 10 years.<BR>
+Getting a Present value.<BR>
+<BR>
+(50/0.05)*(1-1/1.05^10)<BR>
+<BR>
+<B>3. Geographic Mean</B><BR>
+<BR>
+<img src="http://www.freemathhelp.com/images/lessons/gmean2.gif" width="300"><BR>
+<BR>
+When you want to have a geographic mean of<BR>
+2%, 3%, 5% returns,<BR>
+<BR>
+Just simply<BR>
+(1.02*1.03*1.05)^(1/3)-1<BR>
+</TD>
+</TR>
+</TABLE>
+
+  <script src="../js/tools.js"></script>
+  </div>
+</BODY>
+</HTML>

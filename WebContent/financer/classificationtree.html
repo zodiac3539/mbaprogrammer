@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+Previous posting for Machine Learning Series<br />
+<h3 class="post-title entry-title" itemprop="name" style="color: #222222; font-family: Arial, Tahoma, Helvetica, FreeSans, sans-serif; font-size: 22px; font-weight: normal; line-height: normal; margin: 0.75em 0px 0px; position: relative;">
+<a href="http://www.mbaprogrammer.com/2016/03/machine-learning-k-nearest-algorithm-in.html">[Machine Learning] K-Nearest Neighbor Analysis in R (1)</a></h3>
+In order to understand our sample data set and some concepts in machine learning, please visit this web site.<br />
+<br />
+<b>[Limitation of K-nearest Analysis]</b><br />
+<br />
+The notable limitation that KNN has is that it doesn't have any capability of sorting categorical variables. Think about the column comprised of male and female like our member roster. We can't apply KNN to this type of data as this algorithm deals with the distance. The categorical value can't have the distance. There are many types of categorical values. For example, Male vs Female, Child vs Adult, Royal customers vs non-royal customers, Core value vs non-core values. Open your company's database. You'll see there are a lot of categorical values in there.<br />
+In order to overcome this obstacle, Classification Tree arises as an alternative.<br />
+<br />
+<b>[Machine learning mimics human's logical thoughts]</b><br />
+<br />
+Human has an "intuition." The goal of machine learning is to give the machine "the intuitive power" like Human. Actually, K-nearest algorithm uses human's intuition - comparing and finding seemingly similar one. Classification Tree(aka CART) uses human's decision criteria. First let me get into the actual code first. I'll explain one by one later.<br />
+<br />
+<b>[How Classification Tree works]</b><br />
+<br />
+The basic principle is to use "decision tree."<br />
+For example, I have the table below. I want to predict the who is the "student" based upon the age and income.<br />
+<br />
+<table border="1">
+<tbody>
+<tr>
+<td>Age</td><td>Income</td><td>Occupation</td>
+</tr>
+<tr>
+<td>20</td><td>$1000</td><td>Student</td>
+</tr>
+<tr>
+<td>50</td><td>$50,000</td><td>Non-student</td>
+</tr>
+<tr>
+<td>15</td><td>$100</td><td>Student</td>
+</tr>
+<tr>
+<td>34</td><td>$30,000</td><td>Non-student</td>
+</tr>
+</tbody></table>
+<br />
+Let's put aside the machine learning theory for now. Let's rely on our common sense first. We can think that students are generally less than 25 years old. Let's use our decision modeling first.<br />
+<br />
+If( age &gt; 25 ) output = student<br />
+else output = non-student<br />
+<br />
+However, Mark Zuckerberg established Facebook before he became 25. So, young entrepreneurs should be excluded from the student classification. Our common sense says that more than $10,000 income is not likely to be a part time job. So, let's include our logic here.<br />
+<br />
+If( age &gt; 25 ) output = student<br />
+else {<br />
+&nbsp; &nbsp; if( income &gt; $10,000) output = non-student<br />
+&nbsp; &nbsp; else output = student<br />
+}<br />
+<br />
+This is how classification tree works. You can see this decision criteria later. Now, it's time to look at the code. Actually, classification algorithm uses "information entropy". The information theory was invented by Shannon. This theory is widely adopted in your cell phone. As this is the beyond our scope, I want to skip the detailing explanation on information entropy. Those who are interested in can search for information entropy on the internet. It's available at a lot of web sites and youtube pages.<br />
+<br />
+<b>[Codes]</b><br />
+# Classification Tree with rpart<br />
+library("rpart")<br />
+library("gmodels")<br />
+<br />
+normalize &lt;- function(x) {<br />
+&nbsp; #You can normalize the data. However, as classification tree doesn't use the distance, normalization is of less use.<br />
+&nbsp; mean_x &lt;- mean(x)<br />
+&nbsp; stdev_x &lt;- sd(x)*sqrt((length(x)-1)/(length(x)))<br />
+<br />
+&nbsp; num &lt;- x - mean_x<br />
+&nbsp; denom &lt;- stdev_x<br />
+&nbsp; return (num/denom)<br />
+}<br />
+<br />
+iris &lt;- read.csv(url("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"), header = FALSE) #There are great sample data offered by UCI. Let's use this!<br />
+<br />
+names(iris) &lt;- c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width", "Species")<br />
+set.seed(1234)<br />
+ind &lt;- sample(2, nrow(iris), replace=TRUE, prob=c(0.7, 0.3))<br />
+#Unlike KNN, you don't need to seperate the label from the training data because the machine needs to learn<br />
+iris.training &lt;- iris[ind==1, 1:5]<br />
+#However, just like KNN, you need to seperate the label from the test data<br />
+iris.test &lt;- iris[ind==2, 1:4]<br />
+iris.testLabels &lt;- iris[ind==2, 5]<br />
+<br />
+# grow tree<br />
+# y ~ x1 + x2 + x3+ x4<br />
+# y: what we want to know<br />
+# x1, x2, x3, x4: what we know<br />
+fit &lt;- rpart(Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;method="class", data=iris.training)<br />
+<br />
+# plot tree<br />
+plot(fit, uniform=TRUE, main="Classification Tree for Iris")<br />
+text(fit, use.n=TRUE, all=TRUE, cex=.8)<br />
+<br />
+# create attractive postscript plot of tree<br />
+iris_pred &lt;- predict(fit, iris.test, type = "class")<br />
+<br />
+#Confusion Matrix<br />
+CrossTable(x = iris.testLabels, y = iris_pred, prop.chisq=FALSE)<br />
+<div>
+<br /></div>
+<div>
+<b>[Output]</b></div>
+<div>
+&lt;Classification Tree&gt;<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-Qi4cZLhSRsw/Vvidme4O0eI/AAAAAAAAFqI/MoIhVLyUVycEycGkc1FUoBX1fWmH2FL0A/s1600/Classification.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="301" src="https://1.bp.blogspot.com/-Qi4cZLhSRsw/Vvidme4O0eI/AAAAAAAAFqI/MoIhVLyUVycEycGkc1FUoBX1fWmH2FL0A/s400/Classification.png" width="400" /></a></div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+&lt;Confusion Matrix&gt;</div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-JAFz4i8y02A/Vvhpo0WLWII/AAAAAAAAFp4/fyMp1bbTXQQbSl_YmJlZBg-1KRAeRNm5g/s1600/Classification%2BTree.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="230" src="https://1.bp.blogspot.com/-JAFz4i8y02A/Vvhpo0WLWII/AAAAAAAAFp4/fyMp1bbTXQQbSl_YmJlZBg-1KRAeRNm5g/s400/Classification%2BTree.png" width="400" /></a></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br />
+In this case, the accuracy is 36/38 = 94.78%<br />
+<br /></div>
+<div>
+[Next Post]<br />
+<a href="./naivebayes.html">Machine Learning - Naive Bayes model</a><br />
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

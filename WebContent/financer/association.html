@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+
+<b>[Introduction of Association Rules]</b><br />
+<br />
+Sometimes, the anecdotal story helps you understand the new concept. But, this story is real. About 15 years ago, in Walmart, a sales guy made efforts to boost sales in his store. His idea was simple. He bundled the products together and applied some discounts to the bundled products. (Now, it became common practices in marketing) For example, this guy bundled bread with jam, so that customers easily found them together. Moreover, customers could afford to buy them together as the bundled product was discounted. In this way, we can expect an increase in the revenue.<br />
+As bread and jam was so classical, so that he was determined to analyze all sales records in a hope of seizing new opportunities. He found interesting. Many many customers who bought diapers also purchased beers.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-Z4OP-eAxvxY/Vz9rJkenouI/AAAAAAAAGE8/GLt9yuCaOTQxOGhbu2wSTSUcuVqkmONhQCLcB/s1600/Craft-Beer.jpeg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="125" src="https://4.bp.blogspot.com/-Z4OP-eAxvxY/Vz9rJkenouI/AAAAAAAAGE8/GLt9yuCaOTQxOGhbu2wSTSUcuVqkmONhQCLcB/s200/Craft-Beer.jpeg" width="200" /></a></div>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-lr8D5ZE6QDM/Vz9rLy4A2pI/AAAAAAAAGFA/yvpB65lVmPUhZJD4-lTmuVgagaOuSR7qACLcB/s1600/diaper.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="200" src="https://1.bp.blogspot.com/-lr8D5ZE6QDM/Vz9rLy4A2pI/AAAAAAAAGFA/yvpB65lVmPUhZJD4-lTmuVgagaOuSR7qACLcB/s200/diaper.jpg" width="200" /></a></div>
+<br />
+Seemingly, those are totally unrelated. He decided to dig deeper. He realized that it was arduous to raise kids (It doesn't change at all in nowadays) So, the parents impulsively decided to purchase beer to relieve their stress. He bundled diapers and beers together. The sales skyrocketed. Still, this remains the perfect example of Association Rules in data mining. (Thank you professor Sun in University of Notre Dame! He gave this example in Business Intelligence class)<br />
+<b><br /></b>
+<b>[About data]</b><br />
+Now, let's suppose that you own Sephora, the largest cosmetic chain in United States (And probably in the world) You are selling 14 products in your store. Just like Walmart sales guy, you hope to boost your sales with the same technique. How do we go about doing this?<br />
+<br />
+Your products: Brushes, Mascara, Eye shadow, Bronzer, Lip liner, Nail Polish, Lipstick, ...<br />
+(To be honest, as a male, I have no idea what these products are)<br />
+<br />
+Usually, sales data take on this form. It has a transaction number and corresponding items that our customers buy. Usually, when you extract the data from database(MS-SQL, Oracle whatever), it is supposed to be like this. First column is a transaction number, and second column is the item. So according to these data, our customer 1 purchased Blush, Bronzer, Brushes, Concealer, Eyeliner, Lip liner, Mascara, and Nail Polish at once. (I am not sure females purchased cosmetics in bulk actually)<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-TRpzreOIdtE/Vz92ElvRTbI/AAAAAAAAGFQ/RxWAsBnbbggBzBzfslE-8BsRV2-kcJivgCLcB/s1600/Screen%2BShot%2B2016-05-20%2Bat%2B3.32.46%2BPM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://1.bp.blogspot.com/-TRpzreOIdtE/Vz92ElvRTbI/AAAAAAAAGFQ/RxWAsBnbbggBzBzfslE-8BsRV2-kcJivgCLcB/s320/Screen%2BShot%2B2016-05-20%2Bat%2B3.32.46%2BPM.png" width="161" /></a></div>
+<br />
+<br />
+However, in order to be used in R, it should take on this form. It doesn't have any transaction number. You need to vertically arrange items that our customer purchased in a single transaction. I am going to offer you this data in the source code.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-OlE_th5qoPc/Vz92IpnbJfI/AAAAAAAAGFU/8acvsOG-K0Iizgjrkm17udpv8x39bv0TQCLcB/s1600/Screen%2BShot%2B2016-05-20%2Bat%2B3.33.18%2BPM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="136" src="https://2.bp.blogspot.com/-OlE_th5qoPc/Vz92IpnbJfI/AAAAAAAAGFU/8acvsOG-K0Iizgjrkm17udpv8x39bv0TQCLcB/s640/Screen%2BShot%2B2016-05-20%2Bat%2B3.33.18%2BPM.png" width="640" /></a></div>
+<br />
+<br />
+I'll briefly touch on how to change the form of the data later.<br />
+<br />
+<b>[Terms that you should know]</b><br />
+You need to understand several key concepts regarding association rules.<br />
+<br />
+1. A=&gt;B<br />
+<br />
+We call "A" as "LHS(Left-hand side)," and "B" as "RHS(Right-hand side)"<br />
+Let's assume that A is diaper and B is beer. It means when a customer buys diaper, she would buy beer too.<br />
+<br />
+2. Support<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-AHHXEAoicx4/Vz961AXoMfI/AAAAAAAAGFk/mzAeMVzt_Gk4NbRNDHhWhjK4bgK2poXzwCLcB/s1600/Screen%2BShot%2B2016-05-20%2Bat%2B3.59.22%2BPM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="https://4.bp.blogspot.com/-AHHXEAoicx4/Vz961AXoMfI/AAAAAAAAGFk/mzAeMVzt_Gk4NbRNDHhWhjK4bgK2poXzwCLcB/s1600/Screen%2BShot%2B2016-05-20%2Bat%2B3.59.22%2BPM.png" /></a></div>
+Let me get back to Walmart's story. In this case, support means the probability of the customer buying diaper and beer together among all sales transactions.<br />
+<br />
+3. Confidence<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://3.bp.blogspot.com/-uXk-YQLpGyQ/Vz965ZUonRI/AAAAAAAAGFo/T_AIu9nKxG0yZX1214Szeerc9Tc-HeW-QCLcB/s1600/Screen%2BShot%2B2016-05-20%2Bat%2B3.59.26%2BPM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="78" src="https://3.bp.blogspot.com/-uXk-YQLpGyQ/Vz965ZUonRI/AAAAAAAAGFo/T_AIu9nKxG0yZX1214Szeerc9Tc-HeW-QCLcB/s400/Screen%2BShot%2B2016-05-20%2Bat%2B3.59.26%2BPM.png" width="400" /></a></div>
+Suppose that if a customer pick up diaper. How he/she is likely to buy beer? The answer is "confidence" The maximum value of confidence has to be 1.<br />
+<br />
+4. Lift<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://3.bp.blogspot.com/-FL2fBiaXy5U/Vz9-FzLvobI/AAAAAAAAGF4/mFaUsRyUmAklHUmiKy_uTlaigHbL2ZW2QCLcB/s1600/Screen%2BShot%2B2016-05-20%2Bat%2B3.59.32%2BPM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="71" src="https://3.bp.blogspot.com/-FL2fBiaXy5U/Vz9-FzLvobI/AAAAAAAAGF4/mFaUsRyUmAklHUmiKy_uTlaigHbL2ZW2QCLcB/s400/Screen%2BShot%2B2016-05-20%2Bat%2B3.59.32%2BPM.png" width="400" /></a></div>
+Lift is a true comparison between naive model and our model, meaning that how more likely a customer buy both, compared to buy separately? Lift 1 means, our customers are as likely to buy both diaper and beer together as buy them separately. Generally, in order to be meaningful in marketing, lift has to be greater than 1.<br />
+<br />
+<b><br class="Apple-interchange-newline" />[Codes]</b><br />
+Unlike our theory, the code is simple. "arules" package allows you to do this really simply. just 4 lines. That's all.<br />
+<br />
+#Association Rule<br />
+library(arules)<br />
+myurl &lt;- "https://docs.google.com/spreadsheets/d/18KBtFWkMq1Q9mOSVo9Q55GJ9IeC3NRYRn7yV5Id3z6A/pub?gid=0&amp;single=true&amp;output=csv"<br />
+data.raw &lt;- read.transactions(url(myurl), sep=",") #Please use read.transactions! It's not read.csv!<br />
+rules&lt;-apriori(data.raw)<br />
+inspect(rules)<br />
+<br />
+<b>[Interpretation]</b><br />
+<span style="background-color: yellow;">&gt; inspect(rules)</span><br />
+<span style="font-size: x-small;"><span style="font-family: Courier New, Courier, monospace;">&nbsp; &nbsp;lhs &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;rhs &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; support &nbsp; confidence lift &nbsp; &nbsp;</span><span style="font-family: Courier New, Courier, monospace;">1 &nbsp;{Brushes} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =&gt; {Nail Polish} 0.1556949 1.0000000 &nbsp;3.417857</span><span style="font-family: Courier New, Courier, monospace;">2 &nbsp;{Mascara} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =&gt; {Eye shadow} &nbsp;0.3354232 0.8991597 &nbsp;2.258519</span><span style="font-family: Courier New, Courier, monospace;">3 &nbsp;{Eye shadow} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;=&gt; {Mascara} &nbsp; &nbsp; 0.3354232 0.8425197 &nbsp;2.258519</span><span style="font-family: Courier New, Courier, monospace;">4 &nbsp;{Bronzer,Brushes} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =&gt; {Nail Polish} 0.1013584 1.0000000 &nbsp;3.417857</span><span style="font-family: Courier New, Courier, monospace;">5 &nbsp;{Bronzer,Lip liner} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =&gt; {Concealer} &nbsp; 0.1076280 0.8046875 &nbsp;1.742276</span></span><br />
+...<br />
+<br />
+Well, this looks good. However, like I said, the higher lift is, the more it is meaningful in marketing sense. Let's sort it from high lift to low lift, which allows us to identify strong correlation.<br />
+<br />
+<span style="background-color: yellow;">&gt; rules.sorted &lt;- sort(rules, by="lift")</span><br />
+<span style="background-color: yellow;">&gt; inspect(rules.sorted)</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp;lhs &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;rhs &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; support &nbsp; confidence lift &nbsp; &nbsp;</span><br />
+<span style="background-color: cyan; font-family: Courier New, Courier, monospace; font-size: x-small;">1 &nbsp;{Brushes} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =&gt; {Nail Polish} 0.1556949 1.0000000 &nbsp;3.417857</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">4 &nbsp;{Bronzer,Brushes} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =&gt; {Nail Polish} 0.1013584 1.0000000 &nbsp;3.417857</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">26 {Blush,Concealer,Eye shadow} &nbsp; &nbsp;=&gt; {Mascara} &nbsp; &nbsp; 0.1243469 0.9596774 &nbsp;2.572581</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">18 {Blush,Eye shadow} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;=&gt; {Mascara} &nbsp; &nbsp; 0.1765935 0.9285714 &nbsp;2.489196</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">13 {Eye shadow,Nail Polish} &nbsp; &nbsp; &nbsp; &nbsp;=&gt; {Mascara} &nbsp; &nbsp; 0.1243469 0.9083969 &nbsp;2.435115</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">23 {Concealer,Eye shadow} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;=&gt; {Mascara} &nbsp; &nbsp; 0.1870428 0.8905473 &nbsp;2.387265</span><br />
+<br />
+Let's highlight the first row. Support is 0.1556, meaning that customers buy Brushes and Nail Polishes altogether by 15.56% among all transactions. Confidence is 100%, meaning that all brush buyers purchase nail polish (It's huge!). Lift is 3.41, meaning that our customers are 3.41 times more likely to buy brushes and nail polish altogether than buy them separately!<br />
+<br />
+In next section, we are going to prune the result.<br />
+<br />
+<br />
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

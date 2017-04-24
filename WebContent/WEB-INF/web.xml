@@ -1,0 +1,83 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+  <description>MySQL Test App</description>
+  <resource-ref>
+      <description>DBConnection</description>
+      <res-ref-name>jdbc/TestDB</res-ref-name>
+      <res-type>javax.sql.DataSource</res-type>
+      <res-auth>Container</res-auth>
+  </resource-ref>
+  
+  <filter>
+	<filter-name>SessionFilter</filter-name>
+	<filter-class>
+		grechoi.servlet.LoginFilter
+	</filter-class>
+	<init-param>
+		<param-name>avoid-urls</param-name>
+		<param-value>index.jsp</param-value>
+	</init-param>
+</filter>
+<filter-mapping>
+	<filter-name>SessionFilter</filter-name>
+	<url-pattern>/memorize/*</url-pattern>
+</filter-mapping>
+
+  <servlet>
+      <servlet-name>LoginServlet</servlet-name>
+      <servlet-class>grechoi.servlet.LoginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>LoginServlet</servlet-name>
+      <url-pattern>/memorize/LoginServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+      <servlet-name>ListMemServlet</servlet-name>
+      <servlet-class>grechoi.servlet.ListMemServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>ListMemServlet</servlet-name>
+      <url-pattern>/memorize/ListMemServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+      <servlet-name>ListCategoryServlet</servlet-name>
+      <servlet-class>grechoi.servlet.ListCategoryServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>ListCategoryServlet</servlet-name>
+      <url-pattern>/memorize/ListCategoryServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+      <servlet-name>UpdateMemServlet</servlet-name>
+      <servlet-class>grechoi.servlet.UpdateMemServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>UpdateMemServlet</servlet-name>
+      <url-pattern>/memorize/UpdateMemServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+      <servlet-name>CreateCategoryServlet</servlet-name>
+      <servlet-class>grechoi.servlet.CreateCategoryServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>CreateCategoryServlet</servlet-name>
+      <url-pattern>/memorize/CreateCategoryServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>LogoutServlet</servlet-name>
+      <servlet-class>grechoi.servlet.LogoutServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>LogoutServlet</servlet-name>
+      <url-pattern>/memorize/LogoutServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+      <servlet-name>SignupServlet</servlet-name>
+      <servlet-class>grechoi.servlet.SignupServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>SignupServlet</servlet-name>
+      <url-pattern>/memorize/SignupServlet</url-pattern>
+  </servlet-mapping>
+</web-app>

@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<b>[Previous Post]</b><br />
+<a href="./singleregression.html">Single regression on Exxon's stock</a><br />
+<br />
+<b>[Introduction of Multi-regression]</b><br />
+<br />
+Let's recall our last job. We conducted the single regression on Exxon Mobil's stock along with WTI crude oil spot price. The result was fantastic, which accounts for 25% of the variation of stock movement. Put it in other way, R-square. The problem is "are you happy with the result that explains only 25% of the variation?"<br />
+<br />
+For investors, it could be risky that they know only one variable to affect the stock price that they hold. Is there any way to account for the variation of the stock price better?<br />
+<br />
+Then, multi-regression comes out.<br />
+<br />
+y = a&nbsp;+ (a1)x1&nbsp;+ (a2)x2&nbsp;+ (a3)x3&nbsp;+ ...&nbsp;+ ERROR<br />
+<br />
+In the previous post, we simplify the model as y= ax&nbsp;+ b. It was a great starting point. However, our real world is not that simple. It is affected by many variables.<br />
+<br />
+I'll talk about this problem later, but the assumption is the variable x1, x2, and x3 are independent of one another. In order to understand this, you need to understand that the two random variables are independent of each other.<br />
+<br />
+<b>[Independent]</b><br />
+&lt;Theory&gt;<br />
+When we talk that the random variables are independent of each other, it means, it's not correlated. Think about the relationship between temperature and electricity bill. As the temperature goes up, you would use more air conditioner, increasing your electricity bill. In this case, they are <b>"positively correlated."</b> Now, think about the relationship between temperature and the time you spend with your laptop. For some people it might be related, but for me, regardless of the temperature, I should use laptop more than 5 hours for my work. Now, we can say that the temperature and the usage of computer are <b>independent</b>&nbsp;of each other. We can represent this in a mathematical way.<br />
+<br />
+P(AB) = P(A)P(B)<br />
+Correlation(A, B) = 0<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://cdn.business2community.com/wp-content/uploads/2016/04/gears-1236578_960_720-300x200.jpg.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://cdn.business2community.com/wp-content/uploads/2016/04/gears-1236578_960_720-300x200.jpg.jpg" height="213" width="320" /></a></div>
+<br />
+In order to understand the concept of correlation you can think about the gears rotating together.<br />
+<br />
+&lt;In real&gt;<br />
+Sure, it's impossible to meet "totally independent two random variables." Especially, in the macro economic, it is nearly impossible because all variables are connected. In this case, we have to decide where do we draw the line. We can assume that if the correlation is less than 0.2, we can consider it independent.<br />
+<br />
+<b>[What can have an impact on Exxon's equity value?]</b><br />
+We assumed that the WTI crude oil price can do, which turned out to be true. Natural gas price can do that. Not only does Exxon sell oil, but it also sells natural gas. Most importantly, as a member of S&amp;P 500, it also heavily affected by the general market condition. Especially, the index of S&amp;P 500 is a collection of macro variables, like interest rate. In this analysis, I'll add two variables more.<br />
+<br />
+<b>[Where can I can the data]</b><br />
+I really want to be nice, so that I uploaded WTI oil price and natural gas price on my Google Drive. How do we use that? You can watch 3 min video to learn how to retrieve the data from Google Drive to R.<br />
+<br />
+<a href="http://www.mbaprogrammer.com/2016/04/how-to-read-googlesheet-on-r-within.html">How to retrieve the data from Google Drive to R.</a><br />
+<br />
+<b>[Before getting into the code]</b><br />
+(1) I used tseries library just like the previous post. Please, install this if you don't have.<br />
+(2) I used the vanguard's S&amp;P500 index fund in lieu of S&amp;P itself because it's more accessible.<br />
+(3) If you can't understand the code, please go over the previous post again. I deliberately rule out any type of difficult code.<br />
+(4) As I mentioned earlier, you can use WTI and Natural gas data without changing URL. Don't download from the internet. Just use the code.<br />
+<br />
+<b>[Code]</b><br />
+<span style="color: #274e13;">#Gas: https://docs.google.com/spreadsheets/d/1-mMwoHJNrv9_St2x9xMlcNjs-NGKfJ32KOKRHixMZMk/pub?gid=0&amp;single=true&amp;output=csv</span><br />
+<span style="color: #274e13;">#WTI: https://docs.google.com/spreadsheets/d/19kE1nLp5u4Zf2UiZA4-GW0gYhdMvWU60L2M-SIbYqX0/pub?gid=0&amp;single=true&amp;output=csv</span><br />
+<br />
+#Multi Regression and Correlation<br />
+<br />
+library(tseries)<br />
+library(zoo)<br />
+<br />
+<span style="color: #274e13;">#Exxon Mobil's equity value in 2015</span><br />
+xom &lt;- get.hist.quote("XOM", #Tick mark<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; start="2015-01-01", #Start date YYYY-MM-DD<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; end="2015-12-31" #End date YYYY-MM-DD<br />
+)<br />
+<span style="color: #274e13;">#S&amp;P 500. I used Vanguard Index Fund instead of directly using S&amp;P.</span><br />
+snp &lt;- get.hist.quote("VFINX", #Tick mark<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; start="2015-01-01", #Start date YYYY-MM-DD<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; end="2015-12-31" #End date YYYY-MM-DD<br />
+)<br />
+<br />
+<span style="color: #274e13;">#I am going to use close value only</span><br />
+xom_zoo &lt;- xom$Close<br />
+snp_zoo &lt;- snp$Close<br />
+<br />
+<span style="color: #274e13;">#Please check the post that mentions how to get the data from Google Sheet.</span><br />
+wti &lt;- read.csv("https://docs.google.com/spreadsheets/d/19kE1nLp5u4Zf2UiZA4-GW0gYhdMvWU60L2M-SIbYqX0/pub?gid=0&amp;single=true&amp;output=csv")<br />
+<br />
+<span style="color: #274e13;">#When it reads file first, it has categorical format we need to convert it.</span><br />
+wti$VALUE &lt;- as.character(wti$VALUE)<br />
+<span style="color: #274e13;">#It also has garbage value "." in data. You can see in Excel. We can clean this with below command</span><br />
+wti &lt;- wti[wti$VALUE!=".", <span style="color: #274e13;">#Get rid of any value that contains "."</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1:2 <span style="color: #274e13;">#I need first column, and second column as well.</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;]<br />
+<span style="color: #274e13;">#Finally I want to convert character to numeric value.</span><br />
+wti$VALUE &lt;- as.numeric(wti$VALUE)<br />
+wti_zoo &lt;- read.zoo(wti, format="%m/%d/%Y")<br />
+<br />
+gas &lt;- read.csv(url("https://docs.google.com/spreadsheets/d/1-mMwoHJNrv9_St2x9xMlcNjs-NGKfJ32KOKRHixMZMk/pub?gid=0&amp;single=true&amp;output=csv"))<br />
+gas$Price &lt;- as.character(gas$Price)<br />
+gas$Price &lt;- as.numeric(gas$Price)<br />
+gas_zoo &lt;- read.zoo(gas, format="%m/%d/%Y")<br />
+<br />
+<span style="color: #274e13;">#Combine Two Time Series</span><br />
+two &lt;- cbind(wti_zoo, snp_zoo)<br />
+three &lt;- cbind(gas_zoo, two)<br />
+<span style="color: #274e13;">#Remove NA as S&amp;P 500 has more trade days than normal stock.</span><br />
+three.f &lt;- na.omit(three)<br />
+<br />
+<span style="color: #274e13;">#What we need is return.</span><br />
+xom_rate &lt;- (xom_zoo - lag(xom_zoo))/xom_zoo<br />
+wti_rate &lt;- (three.f$wti_zoo - lag(three.f$wti_zoo))/three.f$wti_zoo<br />
+snp_rate &lt;- (three.f$snp_zoo - lag(three.f$snp_zoo))/three.f$snp_zoo<br />
+gas_rate &lt;- (three.f$gas_zoo - lag(three.f$gas_zoo))/three.f$gas_zoo<br />
+regression_result &lt;- lm(xom_rate~wti_rate+snp_rate+gas_rate)<br />
+<br />
+print(summary(regression_result))<br />
+<br />
+cols&lt;-rainbow(4)<br />
+<br />
+<span style="color: #274e13;">#Draw Time Series Graph</span><br />
+<span style="color: #274e13;">#lty: Line Style</span><br />
+plot(xom_rate, col=cols[1], lty=1, main="Return of XOM, WTI, S&amp;P500, Gas", xlab="2015", ylab="Return")<br />
+lines(wti_rate, col=cols[2], lty=2)<br />
+lines(snp_rate, col=cols[3], lty=2)<br />
+lines(gas_rate, col=cols[4], lty=2)<br />
+legend('bottomleft', #It's located in bottom left<br />
+&nbsp; &nbsp; &nbsp; &nbsp;c("XOM", "WTI", "S&amp;P", "Gas"),<br />
+&nbsp; &nbsp; &nbsp; &nbsp;lty=c(1,4), #As this is a line graph, we are going to use line as a symbol<br />
+&nbsp; &nbsp; &nbsp; &nbsp;col=cols, #color<br />
+&nbsp; &nbsp; &nbsp; &nbsp;horiz=TRUE, #Horizontal alignment<br />
+&nbsp; &nbsp; &nbsp; &nbsp;bty='n', #No background<br />
+&nbsp; &nbsp; &nbsp; &nbsp;cex=0.65 #If it is 1.0 it's too big. Basically it is a scale factor<br />
+)<br />
+<div>
+<br /></div>
+<span style="color: #274e13;">#Scatter plot for multi regression</span><br />
+<span style="color: #274e13;">#pch: Dot Style</span><br />
+plot(x=xom_rate, y=gas_rate, col=cols[1], pch=17, main="Scatter plot on return", xlab="XOM", ylab="Gas, S&amp;P, WTI")<br />
+points(x=xom_rate, y=snp_rate, col=cols[2], pch=18)<br />
+points(x=xom_rate, y=wti_rate, col=cols[3], pch=19)<br />
+legend('bottomleft',<br />
+&nbsp; &nbsp; &nbsp; &nbsp;#X, #Y position of the legend. The higher Y value, the higher position in the monitor.<br />
+&nbsp; &nbsp; &nbsp; &nbsp;c("GAS", "S&amp;P", "WTI"),<br />
+&nbsp; &nbsp; &nbsp; &nbsp;pch=c(17, 18, 19), #As this is a line graph, we are going to use line as a symbol<br />
+&nbsp; &nbsp; &nbsp; &nbsp;col=cols, #color<br />
+&nbsp; &nbsp; &nbsp; &nbsp;horiz=TRUE, #Horizontal alignment<br />
+&nbsp; &nbsp; &nbsp; &nbsp;bty='n', #No background<br />
+&nbsp; &nbsp; &nbsp; &nbsp;cex=0.65 #If it is 1.0 it's too big. Basically it is a scale factor<br />
+)<br />
+<div>
+<br /></div>
+<b>[How to interpret the result]</b><br />
+<br />
+&lt;Table&gt;<br />
+Call:<br />
+lm(formula = xom_rate ~ wti_rate + snp_rate + gas_rate)<br />
+<br />
+Residuals:<br />
+&nbsp; &nbsp; &nbsp; Min &nbsp; &nbsp; &nbsp; &nbsp;1Q &nbsp; &nbsp;Median &nbsp; &nbsp; &nbsp; &nbsp;3Q &nbsp; &nbsp; &nbsp; Max<br />
+-0.030185 -0.004732 &nbsp;0.000406 &nbsp;0.005333 &nbsp;0.039771<br />
+<br />
+Coefficients:<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Estimate &nbsp; &nbsp; Std. Error &nbsp;t-value &nbsp;Pr(&gt;|t|) &nbsp; <br />
+(Intercept) &nbsp;<span style="background-color: cyan;">0.0004744</span> &nbsp;0.0005458 &nbsp; 0.869 &nbsp; 0.3856 &nbsp; <br />
+wti_rate &nbsp; &nbsp; <span style="background-color: cyan;">0.1578732</span> &nbsp;0.0193612 &nbsp; 8.154 &nbsp; <span style="background-color: yellow;">1.78e-14 ***</span><br />
+snp_rate &nbsp; &nbsp; <span style="background-color: cyan;">0.9308219</span> &nbsp;0.0577671 &nbsp;16.113 &nbsp;<span style="background-color: yellow;">&lt; 2e-16 ***</span><br />
+gas_rate &nbsp; &nbsp;<span style="background-color: cyan;">-0.0310367</span> &nbsp;0.0150969 &nbsp;-2.056 &nbsp;<span style="background-color: yellow;"> 0.0409 *</span> <br />
+---<br />
+Signif. codes: &nbsp;0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1<br />
+<br />
+Residual standard error: 0.008641 on 247 degrees of freedom<br />
+Multiple R-squared: &nbsp;0.6416,<span class="Apple-tab-span" style="white-space: pre;"> </span><span style="background-color: lime;">Adjusted R-squared: &nbsp;0.6372</span><br />
+F-statistic: 147.4 on 3 and 247 DF, &nbsp;<span style="background-color: lime;">p-value: &lt; 2.2e-16</span><br />
+<div>
+<br /></div>
+Take a look at green highlights first. We need to look at Adjusted R-square as we used multiple variable. 63.72% variation can be explained by this model (Awesome!) Take a look at overall p-value. The likelihood that this model is nothing is less than 2.2*10^-16, meaning that this model is reliable.<br />
+<br />
+Take a look at p-values for each variables (Yellow highlights) All p-values are less than 0.05, so that these variables are statistically meaningful too.<br />
+<br />
+Take a look at blue highlights. Now we find the equation.<br />
+<br />
+y(Exxon's stock return) = 0.0004744&nbsp;+ (0.1578732)(WTI return)&nbsp;+ (0.9308219)(S&amp;P return) - (0.0310367)(Natural gas return)<br />
+<br />
+Wait. Something doesn't make sense to you. Is natural gas price is negatively correlated with the stock return on Exxon? I put forward several hypotheses to account for this unexpected outcome.<br />
+(1) As a result of the advent of fracking technology, natural gas is no longer the production of Exxon. Rather it becomes a raw material.<br />
+(2) Natural gas price responds the market later than WTI as investors more focus on WTI than natural gas.<br />
+(3) Exxon doesn't rely on Natural gas much. They hedged somehow as the oil price hit the lowest in historic level.<br />
+<br />
+I'll let you decide on which theory is the most plausible.<br />
+<br />
+<b>[Time Series Graph]</b><br />
+We can see how much correlate with each other graphically. I drew all time series graphs first. You can see general tendency of up and down are consistent with one another.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-drtlZ3Reh6g/Vx5GWVNnudI/AAAAAAAAFy4/lxr3_9ntSE8KU3YZ-JQZL-fnTb4glSjdgCLcB/s1600/TimeSeries_real.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="318" src="https://2.bp.blogspot.com/-drtlZ3Reh6g/Vx5GWVNnudI/AAAAAAAAFy4/lxr3_9ntSE8KU3YZ-JQZL-fnTb4glSjdgCLcB/s640/TimeSeries_real.png" width="640" /></a></div>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<b>[Scatter Plot]</b></div>
+You can also do the same thing with scatter plot, which allows you to see the correlation between XOM returns and other variables visually.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-XigAS2P2I8A/Vx5GsHWc03I/AAAAAAAAFy8/TPMZbfEzqM4N6TtkCMv7LozwtihnP5fggCLcB/s1600/scatter_real.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="332" src="https://4.bp.blogspot.com/-XigAS2P2I8A/Vx5GsHWc03I/AAAAAAAAFy8/TPMZbfEzqM4N6TtkCMv7LozwtihnP5fggCLcB/s400/scatter_real.png" width="400" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<b>[Correlation in real world]</b><br />
+"cor" command allows you to identify the correlation between two variables. Like I said, it is nearly impossible to be independent for macro economic variables.<br />
+<br />
+&gt; cor(wti_rate, snp_rate)<br />
+[1] 0.2796217<br />
+&gt;<br />
+<br />
+As WTI return and S&amp;P 500 return are not independent of each other, our model could be undermined. However, 27% correlation is not enough to claim that there is a significant correlation between them. Again, it's about where do we draw the line. As a data scientist, you have your own standard to draw the line. From my standpoint, it's okay to have 0.27 correlation.<br />
+<br />
+I'll give you identifying remaining correlation (S&amp;P ~ gas, wti ~ gas) as assignments.<br />
+<br />
+<b>[Additional Tip]</b><br />
+If you think that, in the scatter plot, the blue dots totally eclipse the other dots, you can make the color <span style="background-color: yellow;">transparent</span>. It's not that difficult.<br />
+<br />
+<span style="color: #274e13;">#Make the color transparent</span><br />
+t_col &lt;- function(color, percent = 50, name = NULL) {<br />
+<span style="color: #274e13;">&nbsp; &nbsp; #<span class="Apple-tab-span" style="white-space: pre;"> </span> &nbsp;color = color name</span><br />
+<span style="color: #274e13;">&nbsp; &nbsp; #<span class="Apple-tab-span" style="white-space: pre;"> </span>percent = % transparency</span><br />
+<span style="color: #274e13;">&nbsp; &nbsp; #<span class="Apple-tab-span" style="white-space: pre;"> </span> &nbsp; name = an optional name for the color</span><br />
+<span style="color: #274e13;">&nbsp; &nbsp; ## Get RGB values for named color</span><br />
+&nbsp; &nbsp; rgb.val &lt;- col2rgb(color)<br />
+<span style="color: #274e13;">&nbsp; &nbsp; ## Make new color using input color as base and alpha set by transparency</span><br />
+&nbsp; &nbsp; t.col &lt;- rgb(rgb.val[1], rgb.val[2], rgb.val[3],<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;max = 255,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;alpha = (100-percent)*255/100,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;names = name)<br />
+<span style="color: #274e13;">&nbsp; &nbsp; ## Save the color</span><br />
+&nbsp; &nbsp; return(t.col)<br />
+}<br />
+<div>
+<br /></div>
+<div>
+<div>
+plot(x=xom_rate, y=gas_rate, col=<span style="background-color: yellow;">t_col</span>(cols[1]), pch=17, main="Scatter plot on return", xlab="XOM", ylab="Gas, S&amp;P, WTI")</div>
+<div>
+points(x=xom_rate, y=snp_rate, col=<span style="background-color: yellow;">t_col</span>(cols[2]), pch=18)</div>
+<div>
+points(x=xom_rate, y=wti_rate, col=<span style="background-color: yellow;">t_col</span>(cols[3]), pch=19)</div>
+<div>
+legend('bottomleft',</div>
+<div>
+&nbsp; &nbsp; &nbsp; &nbsp;c("GAS", "S&amp;P", "WTI"),</div>
+<div>
+&nbsp; &nbsp; &nbsp; &nbsp;pch=c(17, 18, 19), #As this is a line graph, we are going to use line as a symbol</div>
+<div>
+&nbsp; &nbsp; &nbsp; &nbsp;col=cols, #color</div>
+<div>
+&nbsp; &nbsp; &nbsp; &nbsp;horiz=TRUE, #Horizontal alignment</div>
+<div>
+&nbsp; &nbsp; &nbsp; &nbsp;bty='n', #No background</div>
+<div>
+&nbsp; &nbsp; &nbsp; &nbsp;cex=0.65 #If it is 1.0 it's too big. Basically it is a scale factor</div>
+<div>
+)</div>
+</div>
+<div>
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-a0A5YFgFsKI/Vx7FB7s2r1I/AAAAAAAAFzU/NSJoa_CTI7MFG-Q-KyXtVCAB69ihQrLAwCLcB/s1600/transparent.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="441" src="https://4.bp.blogspot.com/-a0A5YFgFsKI/Vx7FB7s2r1I/AAAAAAAAFzU/NSJoa_CTI7MFG-Q-KyXtVCAB69ihQrLAwCLcB/s640/transparent.png" width="640" /></a></div>
+<div>
+<br /></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<b>[Concept of the bond duration]</b><br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://i.investopedia.com/inv/tutorials/site/advancedbond/duration2.gif" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" src="http://i.investopedia.com/inv/tutorials/site/advancedbond/duration2.gif" height="253" width="400" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+As you can see above picture, the bond duration tells you the balance point of total cash flow. If the bond duration is larger, it means that the bond's cash flow is focused on its maturity, implying that it has more exposure to the risk (uncertainty)<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://analystnotes.com/graph/bond/SS16SClose1.gif" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://analystnotes.com/graph/bond/SS16SClose1.gif" height="274" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+It also can be explained by the first derivative of the bond yield-price curve. Long time ago, there was no computing power to calculate the bond price corresponding to the yield rate. (That's no longer case) In order to estimate the bond price corresponding to changing interest rate, investors came up with the concept of "duration"</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+It's formula is like below.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://prashantvshah.files.wordpress.com/2011/02/picture13.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="107" src="https://prashantvshah.files.wordpress.com/2011/02/picture13.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<br />
+<b>[Codes]</b><br />
+<br />
+#This function allows you to get the macaulay duration of the bond<br />
+#Maturity = maturity of the bond i.e., 1yr, 2yr<br />
+#par = par value of the bond i.e., 100<br />
+#coupon = coupon rate i.e. if it is 8% -&gt; 100*0.8=8<br />
+#discount = discount rate or YTM i.e., 0.03, 0.04<br />
+#k = how often coupon is given in a year. i.e. semiannual=&gt; k=2<br />
+#Example: f.duration(maturity=2, par=100, coupon=8, discount=0.08, k=2)<br />
+<br />
+f.duration = function(maturity, par, coupon, discount, k=1)<br />
+{<br />
+&nbsp; &nbsp; duration = NULL<br />
+&nbsp; &nbsp; coupon_payment &lt;- k*maturity<br />
+&nbsp; &nbsp; if(coupon == 0) {<br />
+&nbsp; &nbsp; &nbsp; #zero coupon bond<br />
+&nbsp; &nbsp; &nbsp; return(maturity)<br />
+&nbsp; &nbsp; }<br />
+&nbsp; <br />
+&nbsp; &nbsp; for(i in 1:coupon_payment) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; if(i==coupon_payment) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; duration[i] &lt;- ((i/k) * ((coupon/k)+par))/(1+(discount/k))^i<br />
+&nbsp; &nbsp; &nbsp; &nbsp; } else {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; duration[i] &lt;- ((i/k) * (coupon/k))/(1+(discount/k))^i <br />
+&nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; }<br />
+<br />
+&nbsp; &nbsp; return(sum(duration)/par)<br />
+}<br />
+<br />
+<br />
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

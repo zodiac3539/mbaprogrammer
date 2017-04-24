@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<b>[Question]</b><br />
+<br />
+I want to buy a new house, but I don't have enough money. I decide to take out the loan from the bank. The house that I want to buy is worth $150,000. Currently, the bank offers the loan with 12% APR monthly compounded. I want to pay the mortgage for 30 years. What would be the monthly payment?<br />
+<br />
+Plus, show the monthly interest payment and principal payment as time goes by.<br />
+<br />
+<b>[Answer]</b><br />
+We are going to solve this problem with annuity formula. And then, we are going to make a table for each payment period. Be sure that APR should be divided by 12 as it is a monthly payment.<br />
+<br />
+<div class="separator" style="clear: both; text-align: left;">
+<a href="https://4.bp.blogspot.com/-7AUJrhux4cM/Vu1Agdy-mII/AAAAAAAAFnw/dPi065RY72YpFrKFa1eOHBr3vOOPgvKyQ/s1600/PV%2Bof%2BAnnuity%2B1.gif" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="https://4.bp.blogspot.com/-7AUJrhux4cM/Vu1Agdy-mII/AAAAAAAAFnw/dPi065RY72YpFrKFa1eOHBr3vOOPgvKyQ/s1600/PV%2Bof%2BAnnuity%2B1.gif" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Picture is from&nbsp;http://www.financeformulas.net/&nbsp;</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<b>[Code]</b><br />
+<br />
+<span style="color: #274e13;">#Mortgage &amp; Annuity</span><br />
+<span style="color: #274e13;">#Let's suppose that you want to buy a house that is worth $150,000</span><br />
+<span style="color: #274e13;">#Current APR rate is 12%, monthly compounded. (monthly rate = 1%)</span><br />
+<span style="color: #274e13;">#You want to take out the loan for 30 years (360 months)</span><br />
+<span style="color: #274e13;">#What would be the monthly payment?</span><br />
+<span style="color: #274e13;">#What would be the table that describes monthly interest payment &amp; principal payment?</span><br />
+<br />
+principal &lt;- 150000<br />
+period &lt;- 12 * 30 #30 years * 12 months<br />
+<span style="color: #274e13;">#Getting monthly rate</span><br />
+rate &lt;- (0.12 / 12)<br />
+<span style="color: #274e13;">#Getting monthly payment with annuity formula</span><br />
+payment &lt;- principal / ((1-(1+rate)^(-period))/rate)<br />
+<br />
+<span style="color: #274e13;">#In this situation payment would be 1542.92</span><br />
+payment<br />
+<br />
+<span style="color: #274e13;">#Let's build a table</span><br />
+<span style="color: #274e13;">#I use the sequance (1:360), meaning that please make a collection that has the value from 1 to 360.</span><br />
+mortgage &lt;- data.frame(period=(1:360), balance=150000, payment=payment, interest_pmt=(1:360), principal=(1:360))<br />
+<br />
+for(i in 1:360) {<br />
+&nbsp; if(i==1) {<br />
+<span style="color: #274e13;">&nbsp; &nbsp; #First payment</span><br />
+&nbsp; &nbsp; mortgage$interest_pmt[i] &lt;- principal * rate #Interest payment<br />
+<span style="color: #274e13;">&nbsp; &nbsp; #Payment - Interest payment = principal amount that we can pay back this month</span><br />
+&nbsp; &nbsp; mortgage$principal[i] &lt;- mortgage$payment[i] - mortgage$interest_pmt[i]<br />
+&nbsp; &nbsp; mortgage$balance[i] &lt;- mortgage$balance[i] - mortgage$principal[i]<br />
+&nbsp; } else {<br />
+<span style="color: #274e13;">&nbsp; &nbsp; #After second payment</span><br />
+&nbsp; &nbsp; mortgage$interest_pmt[i] &lt;- mortgage$balance[(i-1)] * rate<br />
+&nbsp; &nbsp; mortgage$principal[i] &lt;- mortgage$payment[i] - mortgage$interest_pmt[i]<br />
+&nbsp; &nbsp; mortgage$balance[i] &lt;- mortgage$balance[i-1] - mortgage$principal[i] &nbsp; <br />
+&nbsp; }<br />
+}<br />
+<br />
+<span style="color: #38761d;">#In R, there is a predefined palette. "rainbow" is the most usual one. You don't need to think about which color should be used.</span><br />
+myColor &lt;- rainbow(2)<br />
+plot(mortgage$period, mortgage$interest_pmt, xlab = "Period", ylab="Cash Flow", col=myColor[1], type="l")<br />
+<span style="color: #38761d;">#Using command "lines" is the easiest way to add one more line on the existing graph.</span><br />
+lines(mortgage$period, mortgage$principal, col=myColor[2], type="l")<br />
+<span style="color: #38761d;">#We are going to add legend</span><br />
+legend(1,1200,<br />
+&nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #38761d;">#X, #Y position of the legend. The higher Y value, the higher position in the monitor.</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp;c("Interest Payment", "Principal payment"),<br />
+&nbsp; &nbsp; &nbsp; &nbsp;lty=c(1,1), <span style="color: #38761d;">#As this is a line graph, we are going to use line as a symbol</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp;lwd=c(1,1), <span style="color: #38761d;">#Thickness of the line</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp;col=myColor, <span style="color: #38761d;">#color</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp;cex=0.6 <span style="color: #38761d;">#If it is 1.0 it's too big. Basically it is a scale factor</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp;)<br />
+<br />
+[Result]<br />
+Monthly payment: $1542.919<br />
+<br />
+<span style="color: #38761d;">#head() command allows you to have a peek at data frame if it is really large.</span><br />
+&gt; head(mortgage)<br />
+&nbsp; period &nbsp;balance &nbsp;payment interest_pmt principal<br />
+1 &nbsp; &nbsp; &nbsp;1 149957.1 1542.919 &nbsp; &nbsp; 1500.000 &nbsp;42.91890<br />
+2 &nbsp; &nbsp; &nbsp;2 149913.7 1542.919 &nbsp; &nbsp; 1499.571 &nbsp;43.34808<br />
+3 &nbsp; &nbsp; &nbsp;3 149870.0 1542.919 &nbsp; &nbsp; 1499.137 &nbsp;43.78157<br />
+4 &nbsp; &nbsp; &nbsp;4 149825.7 1542.919 &nbsp; &nbsp; 1498.700 &nbsp;44.21938<br />
+5 &nbsp; &nbsp; &nbsp;5 149781.1 1542.919 &nbsp; &nbsp; 1498.257 &nbsp;44.66157<br />
+6 &nbsp; &nbsp; &nbsp;6 149736.0 1542.919 &nbsp; &nbsp; 1497.811 &nbsp;45.10819<br />
+<br />
+Graph<br />
+<div class="separator" style="clear: both; text-align: left;">
+<a href="https://4.bp.blogspot.com/-bLSW4_B5b7c/Vu0_9FscMAI/AAAAAAAAFns/2Y5FD9OKkPsesfMSLevFWKgvOTf2b-_YA/s1600/Mortgage02.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="297" src="https://4.bp.blogspot.com/-bLSW4_B5b7c/Vu0_9FscMAI/AAAAAAAAFns/2Y5FD9OKkPsesfMSLevFWKgvOTf2b-_YA/s320/Mortgage02.png" width="320" /></a></div>
+<br />
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+body {
+	font-family: Consolas;
+}
+
+.mainmenu {
+	font-family: Verdana;
+	font-style: Bold;
+}
+	
+.customlink {
+	color: white;
+	font-weight: bold;
+}

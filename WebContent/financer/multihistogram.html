@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+We talked about the drawing histogram in R.<br />
+<a href="./histogram.html">[Drawing histogram in R]</a><br />
+<br />
+What if there are two variables that need to be drawn? We can solve this issue just by adding "add=TRUE" option. Please, keep in mind that TRUE FALSE value has to be large capital in R.<br />
+<br />
+<b>[Codes]</b><br />
+iris &lt;- read.csv(url("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"), header = FALSE) #There are great sample data offered by UCI. Let's use this!<br />
+<br />
+<span style="background-color: yellow;">#This function allows to make your bar color transparent!</span><br />
+t_col &lt;- function(color, percent = 50, name = NULL) {<br />
+&nbsp; &nbsp; #<span class="Apple-tab-span" style="white-space: pre;"> </span> &nbsp;color = color name<br />
+&nbsp; &nbsp; #<span class="Apple-tab-span" style="white-space: pre;"> </span>percent = % transparency<br />
+&nbsp; &nbsp; #<span class="Apple-tab-span" style="white-space: pre;"> </span> &nbsp; name = an optional name for the color<br />
+&nbsp; &nbsp; ## Get RGB values for named color<br />
+&nbsp; &nbsp; rgb.val &lt;- col2rgb(color)<br />
+&nbsp; &nbsp; ## Make new color using input color as base and alpha set by transparency<br />
+&nbsp; &nbsp; t.col &lt;- rgb(rgb.val[1], rgb.val[2], rgb.val[3],<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;max = 255,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;alpha = (100-percent)*255/100,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;names = name)<br />
+&nbsp; &nbsp; ## Save the color<br />
+&nbsp; &nbsp; return(t.col)<br />
+}<br />
+<br />
+#Unfortunately, this<br />
+names(iris) &lt;- c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width", "Species")<br />
+<br />
+#Iris-setosa, Iris-virginica, Iris-versicolor<br />
+<br />
+setosa &lt;- iris[iris$Species=="Iris-setosa",]<br />
+virginica &lt;- iris[iris$Species=="Iris-virginica",]<br />
+versicolor &lt;- iris[iris$Species=="Iris-versicolor",]<br />
+<br />
+mycolor&lt;-rainbow(3)<br />
+<br />
+hist(setosa$Sepal.Width, col=t_col(mycolor[1]), xlim=c(1.7, 5))<br />
+hist(virginica$Sepal.Width, col=t_col(mycolor[2]), <span style="background-color: yellow;">add=TRUE</span>)<br />
+hist(versicolor$Sepal.Width, col=t_col(mycolor[3]), <span style="background-color: yellow;">add=TRUE</span>)<br />
+<br />
+<b>[Result]</b><br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://3.bp.blogspot.com/-GlJIpQhuZcU/VwwBPU_n7iI/AAAAAAAAFvM/9_lWh9RdNm4LuTp0m31c3FCNA_lkJmtAg/s1600/Histogram%2BMultiples.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="296" src="https://3.bp.blogspot.com/-GlJIpQhuZcU/VwwBPU_n7iI/AAAAAAAAFvM/9_lWh9RdNm4LuTp0m31c3FCNA_lkJmtAg/s400/Histogram%2BMultiples.png" width="400" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<b>[Are we done?]</b><br />
+<br />
+As you can see above, the graph that we've drawn is not beautiful. The size of the bin that each histogram has is not consistent. The term "Frequency" means that these data are not normalized in terms of the data size. Here's the way to get around issue. We are going to use "freq" option and "breaks" option.<br />
+<br />
+"freq" option gets the data normalized, making sure that it looks to have the same number of data points. Above case, as the setosa have more data points than others, it dominates the graph in terms of the height. From the data visualization perspective, that's not good. We can do better.<br />
+<br />
+"breaks" option ensures that each histogram has the same bin size. Above graph again, the red bar is wider than others. We are going to fix this issue with the break keyword. Again, seeing is believing.<br />
+<br />
+hist(setosa$Sepal.Length, col=t_col(mycolor[1]), xlim=c(4.0, 8.5), ylim=c(0, 1.05), <span style="background-color: yellow;">breaks=seq(4,8,by=0.25),freq=FALSE</span>)<br />
+hist(virginica$Sepal.Length, col=t_col(mycolor[2]), add=TRUE, &nbsp;<span style="background-color: yellow;">breaks=seq(4,8,by=0.25),freq=FALSE</span>)<br />
+hist(versicolor$Sepal.Length, col=t_col(mycolor[3]), add=TRUE, &nbsp;<span style="background-color: yellow;">breaks=seq(4,8,by=0.25),freq=FALSE</span>)<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-G6a9D9ilfhg/Vwxij_CvoBI/AAAAAAAAFwE/2r4yGs620O0WZZyuDnMfUt9blOUiaqiPACLcB/s1600/hist02.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="296" src="https://4.bp.blogspot.com/-G6a9D9ilfhg/Vwxij_CvoBI/AAAAAAAAFwE/2r4yGs620O0WZZyuDnMfUt9blOUiaqiPACLcB/s400/hist02.png" width="400" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+Now, we have the graph that has the same bar width and the same height. That looks much better.<br />
+<br />
+<div>
+<br /></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

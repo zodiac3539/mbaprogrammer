@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<b><br class="Apple-interchange-newline" />[Machine Learning / Data Mining post series]</b><br />
+<b><br /></b>
+<b><br /></b>
+<br />
+<b>[About K-nearest Neighbors]</b><br />
+<br />
+K-nearest model is similar to what we recognize the object intuitively. When we see the fruit which has round shape and red color, we think of it as "an apple." We don't really know that is apple until it goes through DNA test, but we can intuitively recognize the object with certain characteristics of the object. (It could be a fake apple)<br />
+<br />
+K-nearest algorithm is the first machine learning algorithm. But, there are many great resources which explains this algorithm on the internet already. So, in this post, I decided to briefly explain what the underlying algorithm is.<br />
+<br />
+<a href="https://www.datacamp.com/community/tutorials/machine-learning-in-r">Data Camp shed light on this algorithm from different angle.</a><br />
+<br />
+It uses "Geographical distance" to classify something. Let's assume that we have two kinds of data point - '+' and '-'. Each one has the characteristic of x and y, which are numbers. Figuratively, let's say we have the data that illustrates characteristics of male and female. x could correspond to height, y could correspond to weight. Although there is a gray area, we can assume that males are generally taller and heavier than females.<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://mines.humanoriented.com/classes/2010/fall/csci568/portfolio_exports/lguo/image/knn/knn.jpg" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" src="http://mines.humanoriented.com/classes/2010/fall/csci568/portfolio_exports/lguo/image/knn/knn.jpg" height="320" width="308" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+As you can see above, we have unknown record "dot." We want to know whether it is "+" or "-" It has two characteristics x and y. By measuring geographical distance, we can predict it is "+," as it is close to the group of "+"s. In this case we use k=3, meaning that it classifies the dot based upon closest three data points. For the sake of simplicity I use k=3 also.<br />
+<br />
+<b>[Training data set vs Test data set]</b><br />
+We are going to split the data set into two. One is "training data set," which allows the computer to learn what the model looks like. Second one is "test data set," which validates our model and measure how our model is well built. There is no golden rule which proportion is the most effective - 30:70, 40:60, or 50:50. However, keep in mind that large training data set doesn't ensure that the our model is more accurate. I use 70:30 in this post. The data set could be sorted in a certain way. In this case, our computer might spit out the biased result. In order to prevent this, I am going to choose the training data set randomly with "sample" command.<br />
+<br />
+<b>[Code]</b><br />
+<br />
+<span style="color: #38761d;">#K-nearest Analysis algorithm</span><br />
+library("class") <span style="color: #38761d;">#If you don't have it, please install</span><br />
+library("gmodels") <span style="color: #38761d;">#For confusion Matrix</span><br />
+<br />
+normalize &lt;- function(x) {<br />
+<span style="color: #38761d;">&nbsp; #If we don't normalized it, some distance is far longer than others, which dominates the model.</span><br />
+&nbsp; mean_x &lt;- mean(x)<br />
+&nbsp; stdev_x &lt;- sd(x)*sqrt((length(x)-1)/(length(x)))<br />
+<br />
+&nbsp; num &lt;- x - mean_x<br />
+&nbsp; denom &lt;- stdev_x<br />
+&nbsp; return (num/denom)<br />
+}<br />
+<br />
+iris &lt;- read.csv(url("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"), header = FALSE) <span style="color: #274e13;">#There are great sample data offered by UCI. Let's use this!</span><br />
+<br />
+<span style="color: #38761d;">#Unfortunately, these data don't have name. We should add the name.</span><br />
+names(iris) &lt;- c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width", "Species")<br />
+<br />
+<span style="color: #38761d;">#If you want to normalize all data that you have, "lapply" is the greatest way to apply the function to all your data. I want to normalize all my data</span><br />
+<br />
+iris_norm &lt;- as.data.frame(lapply(iris[1:4], normalize))<br />
+<br />
+<span style="color: #38761d;">#Now, we are going to split up the data into two sets. - Training and test</span><br />
+<span style="color: #38761d;">#Training allows the computer to learn the pattern of the data</span><br />
+<span style="color: #38761d;">#Test allows us to validate how accurate our model is.</span><br />
+<br />
+set.seed(1234)<br />
+<span style="color: #38761d;">#Sample allows us to shuffle which row is training and which row is test.</span><br />
+<span style="color: #38761d;">#It's similar to card shuffling.</span><br />
+ind &lt;- sample(2, nrow(iris), replace=TRUE, prob=c(0.7, 0.3))<br />
+<span style="color: #38761d;">#What we know = Training Data Set</span><br />
+iris.training &lt;- iris_norm[ind==1, 1:4]<br />
+iris.test &lt;- iris_norm[ind==2, 1:4]<br />
+<span style="color: #38761d;">#What we want to know = Test Data Set</span><br />
+iris.trainLabels &lt;- iris[ind==1, 5]<br />
+iris.testLabels &lt;- iris[ind==2, 5]<br />
+<br />
+<span style="color: #38761d;">#K-nearest Analysis</span><br />
+<span style="color: #38761d;">#K=3, Use nearest 3 points to classify unknown subject</span><br />
+iris_pred &lt;- knn(train = iris.training, test = iris.test, cl = iris.trainLabels, k=3)<br />
+<br />
+#Print out confusion matrix<br />
+CrossTable(x = iris.testLabels, y = iris_pred, prop.chisq=FALSE)<br />
+<br />
+<b>[Explanation of sample data]</b><br />
+<br />
+Well, as a non-expert of flowers, for me, it is difficult to make a difference among flowers. "Iris" has really similar appearances across the sub species. One way to distinguish them is to use length and width of petal / sepal.<br />
+<br />
+&lt;Iris-Setosa&gt;<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://upload.wikimedia.org/wikipedia/commons/8/86/Iris_setosa.JPG" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="200" src="https://upload.wikimedia.org/wikipedia/commons/8/86/Iris_setosa.JPG" width="150" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+&lt;Iris-versicolor&gt;<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://www.prairiemoon.com/images/D/northern%20blue%20flag%20iris%20-%20iris%20versicolor.jpg" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="131" src="https://www.prairiemoon.com/images/D/northern%20blue%20flag%20iris%20-%20iris%20versicolor.jpg" width="200" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+Take a look at two pictures above. They look very similar and it is nearly impossible to figure out which one is versicolor and which one is setosa without going through DNS test. However, there is a rule of thumb always. Some biologists came up with brilliant idea with the size of petal and sepal.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://www.world-builders.org/lessons/less/les8/les8gifs/polgifs8/flowerparts.gif" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" src="http://www.world-builders.org/lessons/less/les8/les8gifs/polgifs8/flowerparts.gif" height="195" width="200" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<b>&lt;Output&gt;</b><br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-t4bW1m0dxgA/VvV0X_0yZ2I/AAAAAAAAFpA/4Qbqb4IXADwi0M3LaHpDMY4RemnyjOzCA/s1600/Screen%2BShot%2B2016-03-25%2Bat%2B1.23.19%2BPM.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="336" src="https://1.bp.blogspot.com/-t4bW1m0dxgA/VvV0X_0yZ2I/AAAAAAAAFpA/4Qbqb4IXADwi0M3LaHpDMY4RemnyjOzCA/s640/Screen%2BShot%2B2016-03-25%2Bat%2B1.23.19%2BPM.png" width="640" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<b><br /></b>
+<b><br /></b>
+<b><br /></b>
+<b><br /></b>
+<b><br /></b>
+<b><br /></b>
+<b><br /></b>
+<b><br /></b>
+<b>&lt;How to interpret this table&gt;</b><br />
+<br />
+This table is called "Confusion matrix." to assess the accuracy of our model. The actual value of these test variables are in row. The column denotes the prediction value. In the first line, our prediction data exactly match up with the actual data. It's good. However, in the third column, among actual iris-virginica, our model misclassify two rows into Iris-versicolor. Keep in mind that there is no 100% accurate model. As human make mistakes, the machine make mistakes in machine learning.<br />
+<br />
+The accuracy can be defined by (the number of data in diagonal direction) / (the total number of data)<br />
+<br />
+Take a look at diagonal direction 10+12+14 = 36<br />
+Take a look at total number 38<br />
+<br />
+Our model has the accuracy like 36/38 = 94.74%<br />
+---<br />
+Next time, I'll apply this to the financial situation.<br />
+<br />
+<b><span style="background-color: blue; color: white;">[Next Article for machine learning/data mining]</span></b><br />
+<b><span style="background-color: blue; color: white;"><br /></span></b>
+<a href="http://www.mbaprogrammer.com/2016/03/machine-learning-classification-tree-1.html">[Machine Learning] Classification Tree (CART)</a><br />
+<a href="http://www.mbaprogrammer.com/2016/04/machine-learning-naive-bayes-in-r-1.html">[Machine Learning] Naive Bayes</a><br />
+<br />
+<br />
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<b>[Problem]</b><br />
+<br />
+Our company has a project that invests $100M upfront. The expected cash flows are like<br />
+Y1: $50M, Y2: $50M, Y3: $50M<br />
+We don't know the discount rate, but we want to know the BEP(Break Even Point) of the discount rate.<br />
+<br />
+<b>[Source Code]</b><br />
+<br />
+#IRR (Internal Rate of Return)<br />
+#The discount rate that makes NPV value zero.<br />
+#You can't use IRR function, if there is a cash outflow in the future.<br />
+#IRR can be used only when the all cash outflows take place at time 0.<br />
+#Please make sure that cash flow(cf) should take a form of vector<br />
+#cf=c(50,50,50)<br />
+#&lt;Example&gt;<br />
+#f.irr(upfront=-100, cf=c(50,50,50))<br />
+<br />
+f.irr = function(upfront, cf) {<br />
+&nbsp; f.npv = function(x) {<br />
+&nbsp; &nbsp; &nbsp; npv &lt;- upfront<br />
+&nbsp; &nbsp; &nbsp; for(i in 1:length(cf)) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; npv &lt;- npv + cf[i]/(1+x)^i<br />
+&nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; &nbsp; return(npv)<br />
+&nbsp; }<br />
+&nbsp; solution &lt;- uniroot(f.npv, interval=c(0,1)) <br />
+&nbsp; return(solution$root)<br />
+}<br />
+<br />
+<b>[Example]</b><br />
+<br />
+f.irr(upfront=-100, cf=c(50,50,50))<br />
+[1] 0.2337583<br />
+(23.3%)<br />
+<br />
+<div>
+<br /></div>
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

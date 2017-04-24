@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+I am going to expand this post to further discussion -&gt; "How to calculate the equity beta in R"<br />
+<br />
+But, before doing so, it is important to understand the volatility concept. Volatility is a standard deviation of stock returns in a given period. One of the golden rule in investment community says that "Low risk low return, and High risk high return." When we refer to "risk," it means the standard deviation of the return. It is important for investors to have this information when they are about to make portfolio. They want the certain return, but they also want to know what is the level of risk that the portfolio has. One could lose a lot of money in a bad time if his portfolio is too risky.<br />
+<br />
+I am going to look into the volatility of Apple stock in 2015. Luckily, you don't need to get stock information from the internet. There is a great library, which allows you to have the information of stocks with simple commands.<br />
+<br />
+Just like LIBOR case, you need to install a package for this, if you don't have.<br />
+install.packages("tseries")<br />
+<br />
+<b>[Source code]</b><br />
+library(tseries)<br />
+<span style="color: #38761d;">#Getting data from server</span><br />
+<br />
+data &lt;- get.hist.quote("AAPL", <span style="color: #38761d;">#Tick mark</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;start="2015-01-01", <span style="color: #38761d;">#Start date YYYY-MM-DD</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end="2015-12-31" <span style="color: #38761d;">#End date YYYY-MM-DD</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;)<br />
+<br />
+<span style="color: #38761d;">#We only take into account "Closing price", the price when the market closes</span><br />
+yesterdayprice &lt;- data$Close<br />
+<span style="color: #38761d;">#This is a unique feature of R better than Excel</span><br />
+<span style="color: #38761d;">#I need to calculate everyday return</span><br />
+<span style="color: #38761d;">#The stock return is defined as (today price - yesterday price)/today price</span><br />
+todayprice &lt;- lag(yesterday price) <span style="color: #38761d;">#Lag = Pushback one day in time series</span><br />
+rets &lt;- (todayprice - yesterdayprice)/todayprice<br />
+<span style="color: #38761d;">#Annualized and percentage, sd=standard deviation of that collection</span><br />
+vol &lt;- sd(rets) * sqrt(length(todayprice)) * 100<br />
+<br />
+<span style="color: #38761d;">#Draw the histogram on the return</span><br />
+hist(rets, xlab="Return", ylab="Frequency", main="Histogram of Apple stock in 2015")<br />
+<br />
+<span style="color: #38761d;">#String concatenation</span><br />
+output &lt;- paste("Volitility: ", vol, sep="")<br />
+output &lt;- paste(output, "%", sep="")<br />
+print(output)<br />
+<br />
+<b>[Output]</b><br />
+&gt; source('~/Documents/FinanceInR/stockvolatility.R')<br />
+&nbsp; % Total &nbsp; &nbsp;% Received % Xferd &nbsp;Average Speed &nbsp; Time &nbsp; &nbsp;Time &nbsp; &nbsp; Time &nbsp;Current<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dload &nbsp;Upload &nbsp; Total &nbsp; Spent &nbsp; &nbsp;Left &nbsp;Speed<br />
+&nbsp; 0 &nbsp; &nbsp; 0 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp; &nbsp; &nbsp;0 &nbsp; &nbsp; &nbsp;0 --:--:-- --:--:-- --:--:-- &nbsp; &nbsp; 0100 &nbsp;1893 &nbsp; &nbsp;0 &nbsp;1893 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp;14903 &nbsp; &nbsp; &nbsp;0 --:--:-- --:--:-- --:--:-- 14905100 18323 &nbsp; &nbsp;0 18323 &nbsp; &nbsp;0 &nbsp; &nbsp; 0 &nbsp; 107k &nbsp; &nbsp; &nbsp;0 --:--:-- --:--:-- --:--:-- &nbsp;107k<br />
+time series starts 2015-01-02<br />
+[1] "Volitility: 26.7574299862969%"<br />
+<br />
+<div class="separator" style="clear: both; text-align: left;">
+<a href="https://4.bp.blogspot.com/-VU0SV8xWV0w/VvA-l4y4RbI/AAAAAAAAFoI/xQvsrk4pRegwAS836VNNmLU6BLNq1ZZ1g/s1600/histogram.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="296" src="https://4.bp.blogspot.com/-VU0SV8xWV0w/VvA-l4y4RbI/AAAAAAAAFoI/xQvsrk4pRegwAS836VNNmLU6BLNq1ZZ1g/s320/histogram.png" width="320" /></a></div>
+<br />
+<br />
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_121">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.core.runtimeTarget/J2EE Runtime Library">
+		<attributes>
+			<attribute name="owner.project.facets" value="jst.web"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/annotations-api.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/catalina.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/catalina-ant.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/catalina-ha.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/catalina-storeconfig.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/catalina-tribes.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/ecj-4.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/el-api.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/jasper.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/jasper-el.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/mysql-connector-java-5.1.41-bin.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-api.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-coyote.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-dbcp.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-i18n-es.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-i18n-fr.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-i18n-ja.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-jdbc.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-jni.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-util.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-util-scan.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/tomcat-websocket.jar"/>
+	<classpathentry kind="lib" path="C:/Tomcat8/lib/websocket-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/grechoi/workspace/usertest/WebContent/WEB-INF/lib/commons-lang3-3.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/grechoi/workspace/usertest/WebContent/WEB-INF/lib/commons-lang3-3.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/grechoi/workspace/usertest/WebContent/WEB-INF/lib/commons-lang3-3.5-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/grechoi/workspace/usertest/WebContent/WEB-INF/lib/commons-lang3-3.5-tests.jar"/>
+	<classpathentry kind="lib" path="C:/Users/grechoi/workspace/usertest/WebContent/WEB-INF/lib/commons-lang3-3.5-test-sources.jar"/>
+	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
+</classpath>

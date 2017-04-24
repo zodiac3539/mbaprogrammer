@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+
+<b>[The goal of this page]</b><br />
+When I have read all R introductions, the books were filled with just instructions. The goal of R is to solve our real life problem. That's why I want to minimize this page. In the real though, we need to understand some key concepts that might be useful for you to tackle the real life problem. Here's basic data structures and data manipulation method.<br />
+<br />
+Still, I believe the best way to learn R programming language is to tackle the real life problems. Please, just skim through how it works.<br />
+<br />
+<b>[Assign Variables]</b><br />
+Unlike C, C++, or JAVA, you don't need to think about memory. The beauty of R is that it enables you to make codes without knowing in depth knowledge on algorithms or memory management method. You can assign variable easily in R.<br />
+<br />
+Let's assume that you know the cash flow of incoming several years. (T=1 30, T=2 50, T=3 80) You want to discount it with the rate (r=0.02). However, it would be tedious type 1+0.02 always. That's why programmers came up with brilliant idea - assigning variable.<br />
+<br />
+Here's some examples<br />
+<br />
+<span style="color: red;">Please, keep in mind that "&gt;" or "+" signs are command prompt. These are not things that I type.</span><br />
+<br />
+<span style="color: #20124d;">&gt; r&lt;-0.02</span><br />
+<span style="color: #20124d;">&gt; 30/(1+r)</span><br />
+<span style="color: #20124d;">[1] 29.41176</span><br />
+<span style="color: #20124d;">&gt; 50/(1+r)^2</span><br />
+<span style="color: #20124d;">[1] 48.05844</span><br />
+<span style="color: #20124d;">&gt; 80/(1+r)^3</span><br />
+<span style="color: #20124d;">[1] 75.38579</span><br />
+<br />
+<div>
+<b>[Iterations]</b><br />
+<div>
+When you run into sigma sign(∑), you can think of this command, which allows you to run same commands for certain amount of time.<br />
+<br />
+&lt;Annuity Problem&gt;<br />
+Let's assume that we have an incoming cash flow $50 in T=1, T=2, and T=3. The discount rate is r=0.05. What is the present value of this cash flow?<br />
+<br />
+<span style="background-color: yellow;">&gt; pv &lt;- 0</span><br />
+<span style="background-color: yellow;">&gt; for (i in 1:3) {</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; pv &lt;- pv + 50/(1.05)^i</span><br />
+<span style="background-color: yellow;">+ }</span><br />
+<span style="background-color: yellow;">&gt; print(pv)</span><br />
+[1] 136.1624<br />
+&gt;<br />
+<br /></div>
+</div>
+<div>
+<b>[Data type]</b></div>
+There are some data that cannot be represented in a single number. The cash flow could be a good example. If you want to know historical stock performance, the time series data type would meet your requirement. Sometimes, we want the data type like excel, a combination of numbers, strings, true or false values, all of things. Then you should take into account using data frame. There is no golden rule in which you should use this data type in this situation. What it takes to be a good data scientist is having an eye for the data type, make it easier for you to solve business problem quickly.<br />
+<br />
+<i><u>&lt;Collection Data Type (aka Vector)&gt;</u></i><br />
+In order to represent cash flow, collection type can be helpful.<br />
+Let's assume that there is a cash flow T=1 50, T=2 100, T=3 50, T=4 80<br />
+<br />
+Here's how do we defined the collection type.<br />
+<br />
+<span style="background-color: yellow;">&gt; cf &lt;- c(50,100,50,80) #c means "collection"</span><br />
+&gt; cf<br />
+[1] &nbsp;50 100 &nbsp;50 &nbsp;80<br />
+<span style="background-color: yellow;">&gt; cf[1] #Getting value of first index</span><br />
+[1] 50<br />
+<span style="background-color: yellow;">&gt; cf[2] #Getting value of second index</span><br />
+[1] 100<br />
+<span style="background-color: yellow;">&gt; cf[3] #Getting value of third</span><br />
+[1] 50<br />
+<span style="background-color: yellow;">&gt; cf[4] #Fourth</span><br />
+[1] 80<br />
+&gt;<br />
+<br />
+Keep in mind that you don't need to type the indices for cash flow. It automatically start off with "1."<br />
+<br />
+<div>
+<i><u>&lt;Data Frame&gt;</u></i><br />
+<div>
+If you want more Excel like or database like data type, "data frame" would meet your need. Let's assume that you need this information.<br />
+<br />
+<table border="1">
+<tbody>
+<tr>
+<td>Month</td><td>LIBOR RATE</td><td>T-bill rate</td>
+</tr>
+<tr>
+<td>1 month</td><td>0.01</td><td>0.015</td>
+</tr>
+<tr>
+<td>3 month</td><td>0.02</td><td>0.022</td>
+</tr>
+<tr>
+<td>6 month</td><td>0.03</td><td>0.033</td>
+</tr>
+</tbody></table>
+<br />
+You can build the data frame like this.<br />
+<br />
+<span style="background-color: yellow;">&gt; information_table &lt;- data.frame(</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; month=c("1m", "3m", "6m"),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; libor_rate=c(0.01, 0.02, 0.03),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; tbill_rate=c(0.015, 0.022, 0.033)</span><br />
+<span style="background-color: yellow;">+ )</span><br />
+<span style="background-color: yellow;">&gt; information_table[2]</span><br />
+&nbsp; libor_rate<br />
+1 &nbsp; &nbsp; &nbsp; 0.01<br />
+2 &nbsp; &nbsp; &nbsp; 0.02<br />
+3 &nbsp; &nbsp; &nbsp; 0.03<br />
+<span style="background-color: yellow;">&gt; information_table[,2]</span><br />
+[1] 0.01 0.02 0.03<br />
+&gt;<br />
+<br />
+The important thing is that when you choose the name of the variable, make sure you don't use any white space(space, tab, or enter).<br />
+<br />
+if you type data frame[2] you can have access to 2nd column<br />
+if you type data frame[,2] you can have access to 2nd row.<br />
+<br />
+if you type data frame[2,2], you can have access to the value in 2nd column &amp; 2nd row.</div>
+</div>
+<div>
+<br /></div>
+<div>
+<i><u>&lt;List Data Type&gt;</u></i><br />
+<div>
+If you want to put together the different types of the collection, list type could be useful. Each collection doesn't have to have same length. This is especially useful when you want to store unstructured data.<br />
+<br />
+<span style="background-color: yellow;">&gt; libor&lt;-c(0.01, 0.02, 0.03) #Number</span><br />
+<span style="background-color: yellow;">&gt; tbill&lt;-c(0.01, 0.02, 0.05, 0.12) #Number</span><br />
+<span style="background-color: yellow;">&gt; swap&lt;-c("1m", "2m", "3m", "6m", "12m") #String</span><br />
+<span style="background-color: yellow;">&gt; counterpartyrisk&lt;-c(TRUE, FALSE, TRUE) #Boolean</span><br />
+<span style="background-color: yellow;">&gt; list_all &lt;- list(libor, tbill, swap, counterpartyrisk)</span><br />
+<br />
+In order to have access to each collection you should use [[]] instead of []. You can use [], but you'll have the list type instead of the collection type, make it harder for you to have access to specific value.<br />
+<br />
+<span style="background-color: yellow;">&gt; list_all[1] #this returns list type</span><br />
+[[1]]<br />
+[1] 0.01 0.02 0.03<br />
+<br />
+<span style="background-color: yellow;">&gt; list_all[[1]] #this returns collection type(vector)</span><br />
+[1] 0.01 0.02 0.03<br />
+<span style="background-color: yellow;">&gt; list_all[1][1] #this returns list type too.</span><br />
+[[1]]<br />
+[1] 0.01 0.02 0.03<br />
+<br />
+<span style="background-color: yellow;">&gt; list_all[[1]][1] #If you want to have access to 1st list and 1st row, this is the right command.</span><br />
+[1] 0.01<br />
+<br />
+<br />
+<i><u>&lt;Factors (Categorical value)&gt;</u></i><br />
+Factor is a categorical variable, such as Male/Female, Adult/Kids, A/B/C/D/F Grades. If you use just Excel, you would hardly run into this data type, but if you use databases, such as Oracle, My-SQL, or MS-SQL, you should get yourself familiar with this concept, as it separates the actual value from the code value.<br />
+<br />
+<span style="background-color: yellow;">&gt; information_table &lt;- data.frame(</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; people_name=c("Tom", "Jane", "Greg", "Kelly"),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; people_gender=c(1, 2, 1, 2)</span><br />
+<span style="background-color: yellow;">+ )</span><br />
+<span style="background-color: yellow;">&gt; information_table$people_gender &lt;- factor(information_table$people_gender, labels=c("Male", "Female"))</span><br />
+<span style="background-color: yellow;">&gt; information_table</span><br />
+&nbsp; people_name people_gender<br />
+1 &nbsp; &nbsp; &nbsp; &nbsp; Tom &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Male<br />
+2 &nbsp; &nbsp; &nbsp; &nbsp;Jane &nbsp; &nbsp; &nbsp; &nbsp;Female<br />
+3 &nbsp; &nbsp; &nbsp; &nbsp;Greg &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Male<br />
+4 &nbsp; &nbsp; &nbsp; Kelly &nbsp; &nbsp; &nbsp; &nbsp;Female<br />
+<span style="background-color: yellow;">&gt; information_table$people_gender</span><br />
+[1] Male &nbsp; Female Male &nbsp; Female<br />
+Levels: Male Female<br />
+<div>
+<br /></div>
+<div>
+One way to have access to the entire column in the specific data frame is to use "$". DataFrame$ColumnName</div>
+<div>
+<br /></div>
+<i><u>&lt;Time Series&gt;</u></i><br />
+<div>
+Basically, time series is almost similar to the data frame. The only difference is the row name is defined as the time stamp, like 2015-01-01. It allows you to calculate the date easier than the data frame. In our posts, we are going to use "zoo" type. I want to defer explanation until we run into "tseries" when you get the stock data from the internet. Again, I want to keep the introduction part as simple as possible. I believe that's the huge differentiator from other online R material. You should learn program or tool by actually solving.</div>
+</div>
+</div>
+<div>
+<br /></div>
+<div>
+<div>
+<b>[Defining functions]</b></div>
+</div>
+<div>
+When we think about the function, mathematically it can be defined as y=f(x). It's not that different. The function is supposed to give you certain return corresponding to the x value. If the x value is the same, so does y, unless it is a stochastic function.<br />
+<br />
+I want to get square value(^2) of the number. Let's do that.<br />
+<br />
+<span style="background-color: yellow;">&gt; getsquare&lt;-function(x) {</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; y &lt;- x^2</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; return(y)</span><br />
+<span style="background-color: yellow;">+ }</span><br />
+&gt;<br />
+<span style="background-color: yellow;">&gt; getsquare(2)</span><br />
+[1] 4<br />
+<span style="background-color: yellow;">&gt; getsquare(4)</span><br />
+[1] 16<br />
+<br />
+&lt;When you use multiple input variables&gt;<br />
+Let's assume that your function has two input variables, x and y.<br />
+f(x,y) = x+y.<br />
+<br />
+When you use the function you can directly assign the variable in the parenthesis in your function.<br />
+This feature is especially powerful when the function has a multiple of input variables. We'll see this case often. This feature makes you less confused when you deal with the functions along with more than 10 input variables.<br />
+<br />
+If I translate it into the mathematical terms, it would be like below.<br />
+f(x=3, y=5) = 8.<br />
+We can do the same way in R.<br />
+<br />
+<span style="background-color: yellow;">&gt; plot(x=information_table$month, y=information_table$libor_rate)</span><br />
+<span style="background-color: yellow;">&gt; sumvariables &lt;- function(x, y) {</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; tmp &lt;- x+y</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; return(tmp)</span><br />
+<span style="background-color: yellow;">+ }</span><br />
+<span style="background-color: #cfe2f3;">&gt; sumvariables(x=3, y=5)</span><br />
+[1] 8<br />
+&gt;<br />
+<br />
+<br /></div>
+<div>
+<div>
+<b>[Other data manipulation]</b></div>
+<div>
+<i><u>&lt;sapply&gt;</u></i><br />
+If you want to change all the values in data frame, let's say, you want to multiply the data frame by 2, you can use "sapply" command. Here's the step.<br />
+<br />
+(1) define(or read) the data<br />
+(2) define the function first.<br />
+(3) use sapply to the data frame that you want to change. The defined function in (1) automatically applies to all your data points.<br />
+(4) see the result.<br />
+<br />
+<span style="background-color: yellow;">&gt; information_table &lt;- data.frame(</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; libor_rate=c(0.01, 0.02, 0.03),</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; tbill_rate=c(0.015, 0.022, 0.033)</span><br />
+<span style="background-color: yellow;">+ )</span><br />
+&gt;<br />
+<span style="background-color: yellow;">&gt; changevalues &lt;- function(x) {</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; y &lt;- x*2</span><br />
+<span style="background-color: yellow;">+ &nbsp; &nbsp; return (y)</span><br />
+<span style="background-color: yellow;">+ }</span><br />
+&gt;<br />
+<span style="background-color: yellow;">&gt; information_table&lt;-sapply(information_table, changevalues)</span><br />
+<span style="background-color: yellow;">&gt; information_table</span><br />
+&nbsp; &nbsp; &nbsp;libor_rate tbill_rate<br />
+[1,] &nbsp; &nbsp; &nbsp; 0.02 &nbsp; &nbsp; &nbsp;0.030<br />
+[2,] &nbsp; &nbsp; &nbsp; 0.04 &nbsp; &nbsp; &nbsp;0.044<br />
+[3,] &nbsp; &nbsp; &nbsp; 0.06 &nbsp; &nbsp; &nbsp;0.066<br />
+<br />
+Here's some other introduction page for R<br />
+<b>[Other tutorials]</b><br />
+<a href="./tutorial2.html">R Tutorial 2 - If~else, File read/write, String manipulation</a><br />
+<br />
+<b>[Following Study]</b><br />
+I think you learn almost all necessary basic functions to tackle finance problems. It's time to solve real problem. Here's some problems that may enhance your R-skills.<br />
+<br />
+<a href="http://www.mbaprogrammer.com/2016/03/how-to-calculate-annuity-value-in-r.html">How to Calculate Annuity value in R (Mortgage Problem)</a><br />
+<br />
+<br />
+<br />
+<br /></div>
+</div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>

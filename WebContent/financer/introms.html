@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>MBA Programmer - Gregory Choi</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+  <body>
+  <div id="menu"></div><BR>
+  <div id="body">
+  
+<b>[Machine Learning? Data Mining?]</b><br />
+<br />
+Well, there is a little bit difference between machine learning and data mining although I don't see any difference between them.<br />
+<br />
+<a href="http://stats.stackexchange.com/questions/5026/what-is-the-difference-between-data-mining-statistics-machine-learning-and-ai">See the debate on the difference between machine learning and data mining.</a><br />
+<br />
+At the end, it is about training the machine to recognize the data, and the predict the future (or unknown variables) with the training. I'll use both terms interchangeably. Please, feel free to challenge me if I am wrong.<br />
+<div>
+<br /></div>
+<b>[How it works?]</b><br />
+<b><br /></b>
+Well, seeing is believing. I have been in search for the better explanation. But, professor Keating in University Notre Dame has a really great explanation for that. You'll see just two pictures with the painters' name. Next, I am going to give you just pictures, and give you the question "who is the painter?" I swear you can answer the question 100% correctly.<br />
+<br />
+&lt;Claude Monet&gt;<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://upload.wikimedia.org/wikipedia/commons/3/31/Claude_Monet_023.jpg" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="200" src="https://upload.wikimedia.org/wikipedia/commons/3/31/Claude_Monet_023.jpg" width="131" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+&lt;Van Gogh&gt;<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://www.vangoghgallery.com/es/images/Van-Gogh_New-Template/prints-set1/print-starry-night.jpg" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" src="http://www.vangoghgallery.com/es/images/Van-Gogh_New-Template/prints-set1/print-starry-night.jpg" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+Now, who painted these pictures?<br />
+<div style="text-align: center;">
+&lt;1&gt;</div>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://samlyonart.files.wordpress.com/2015/07/van.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="235" src="https://samlyonart.files.wordpress.com/2015/07/van.jpg" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+&lt;2&gt;</div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://upload.wikimedia.org/wikipedia/commons/d/da/Claude_Monet,_Saint-Georges_majeur_au_cr%C3%A9puscule.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="226" src="https://upload.wikimedia.org/wikipedia/commons/d/da/Claude_Monet,_Saint-Georges_majeur_au_cr%C3%A9puscule.jpg" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+&lt;3&gt;</div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://paintingowu.files.wordpress.com/2011/02/monet-madame-monet-and-her-son.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://paintingowu.files.wordpress.com/2011/02/monet-madame-monet-and-her-son.jpg" width="253" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+&lt;4&gt;</div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://partnouveau.com/wp-content/uploads/2013/04/Vincent_Willem_van_Gogh_128.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://partnouveau.com/wp-content/uploads/2013/04/Vincent_Willem_van_Gogh_128.jpg" height="320" width="255" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+&lt;5&gt;</div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://www.ibiblio.org/wm/paint/auth/gogh/fields/gogh.olive-trees.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="259" src="https://www.ibiblio.org/wm/paint/auth/gogh/fields/gogh.olive-trees.jpg" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+&lt;Answer&gt;</div>
+<div class="separator" style="clear: both; text-align: left;">
+1 - Gogh</div>
+<div class="separator" style="clear: both; text-align: left;">
+2 - Monet</div>
+<div class="separator" style="clear: both; text-align: left;">
+3 - Monet</div>
+<div class="separator" style="clear: both; text-align: left;">
+4 - Gogh</div>
+<div class="separator" style="clear: both; text-align: left;">
+5 - Gogh</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+&lt;How your brain worked?&gt;</div>
+<div class="separator" style="clear: both; text-align: left;">
+As soon as you saw those pictures, in your mind, you already have a formula, which allows you to make a difference between two painters. (By the way, both painters are well known to have stark contrast in their painting styles to each other.)</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div>
+<table bgcolor="000000" cellpadding="1" cellspacing="2">
+<tbody>
+<tr>
+<td bgcolor="#FFFFFF">Features</td>
+<td bgcolor="#FFFFFF">Gogh</td>
+<td bgcolor="#FFFFFF">Monet</td>
+</tr>
+<tr>
+<td bgcolor="#FFFFFF">Color</td>
+<td bgcolor="#FFFFFF">Use 4-5 colors</td>
+<td bgcolor="#FFFFFF">Use more than 10 colors</td>
+</tr>
+<tr>
+<td bgcolor="#FFFFFF">Style</td>
+<td bgcolor="#FFFFFF">Masculine</td>
+<td bgcolor="#FFFFFF">Feminine</td>
+</tr>
+<tr>
+<td bgcolor="#FFFFFF">Stroke</td>
+<td bgcolor="#FFFFFF">Rough</td>
+<td bgcolor="#FFFFFF">Smooth</td>
+</tr>
+<tr>
+<td bgcolor="#FFFFFF">Viewer's Perception</td>
+<td bgcolor="#FFFFFF">Powerful</td>
+<td bgcolor="#FFFFFF">Detailed</td>
+</tr>
+</tbody></table>
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Although there are some pictures which exactly <b>doesn't</b> fall into those two categories, we can get a broad sense of which picture is painted by whom.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Machine learning does the same thing. It learns the data given by the user. We call it as a <b>"training set"</b> Then, it applies the formula that was built when the machine analyzed the training set to the data set that we want to forecast. We call it as a <b>"test set."</b> The prediction can be wrong, but generally as we provide the machine with the more qualified test data, we can get the better prediction.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<b>[Where can we apply it?]</b></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+&lt;Sales&gt;</div>
+<div class="separator" style="clear: both; text-align: left;">
+You are the sales person of the insurance company. Just you've got the list of potential customers. It has the information of their income, age, place, and jobs. If you are a good sales person, you would have a gut feeling to single out which customer is willing to sign up the new insurance plan. However, with the machine learning, you don't need any gut feeling. If you have the past transaction records, it tells you which customer is the most likely to sign up the new insurance plan.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+&lt;Card company&gt;</div>
+<div class="separator" style="clear: both; text-align: left;">
+Suppose that you are in charge of issuing cards. You don't want to issue cards to those who are highly likely not to pay the card bill on time. In this case, you can figure out who is likely to default based upon age, income, job, and savings. Actually, credit card companies adopt this techniques long time ago. If you get "you are rejected to your request on issuing card" message, you would probably not pass this test.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+I want to lead this conversation into real application of data mining.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<a href="./knearest.html">Machine Learning 01: K-Nearest Neighbor Algorithm in R</a></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<br />
+<br />
+
+  <script src="../js/tools.js"></script>
+  </div>
+  </body>
+</html>
