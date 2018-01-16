@@ -31,3 +31,12 @@ CREATE TABLE category (
 INSERT INTO usermgmt VALUES('grechoi', '1q2w3e4r!', 'Gregory Choi', 1);
 INSERT INTO category VALUES(1, 'grechoi', 'English');
 INSERT INTO category VALUES(2, 'grechoi', 'Japanese');
+
+CREATE TABLE bulletin (
+    categoryseq BIGINT primary key,
+    bcategory VARCHAR(255),
+    subject VARCHAR(255),
+    content NVARCHAR(4000),
+    userid VARCHAR(200)
+);
+
