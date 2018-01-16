@@ -19,7 +19,8 @@
   <div id="body">
   Welcome to Gregory Choi's R/Finance/Code/MBA repository!<BR>
   <BR>
-  <a href="https://www.linkedin.com/in/seokbongchoi/">Go to Gregory Choi's LinkedIn page</a><BR>
+  <a href="https://www.linkedin.com/in/seokbongchoi/" target="_blank">Go to Gregory Choi's LinkedIn page</a><BR><BR>
+  <a href="https://github.com/zodiac3539/" target="_blank">Go to Gregory Choi's Github page</a><BR>
   <script src="../js/tools.js"></script>
   </div>
   </body>

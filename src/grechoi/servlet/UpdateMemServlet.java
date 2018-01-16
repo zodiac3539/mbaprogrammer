@@ -126,7 +126,7 @@ public class UpdateMemServlet extends HttpServlet{
 			response.sendRedirect("./ListMemServlet?categoryseq=" + categoryseq);
 
 		} else if(command.equals("like")) {
-			System.out.println("Like has been invoked.");
+			//System.out.println("Like has been invoked.");
 			String seq_str = request.getParameter("seq");
 			long seq = Long.parseLong(seq_str);
 			String like = request.getParameter("like");

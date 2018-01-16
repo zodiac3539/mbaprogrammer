@@ -9,15 +9,15 @@ var bases = '..';
 	    str = '';
 	    str = str + '<Table width=100% bgcolor=#000099 class=mainmenu><tr><td>';
 	    str = str + '<a id=\"menu01\" class=\"customlink\">Home</a>';
-	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;';
+	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	    str = str + '<a id=\"menu02\" class=\"customlink\">Foreign Exchange</a>';
-	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;';
+	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	    str = str + '<a id=\"menu03\" class=\"customlink\">Finance R Repository</a>';
-	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;';
+	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	    str = str + '<a id=\"menu04\" class=\"customlink\">Calculator</a>';
-	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;';	    
-	    str = str + '<a id=\"menu05\" class=\"customlink\">Code Archives</a>';
-	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;';	    
+	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';	    
+	    str = str + '<a id=\"menu05\" class=\"customlink\">IT Tip</a>';
+	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';	    
 	    str = str + '<a id=\"menu06\" class=\"customlink\">Flash Card</a>';
 	    str = str + '</td></tr></table>';
 	    
@@ -68,7 +68,7 @@ var bases = '..';
 
 		    		    dict["#menu03"] = "../financer/index.html";
 		    		    dict["#menu04"] = "../calculator/justcalculator.html";
-		    		    dict["#menu05"] = "http://zodiac3539.cafe24.com/portfolio.html";
+		    		    dict["#menu05"] = "../bulletin/BulletinServlet";
 		    		    dict["#menu06"] = "../memorize/login.jsp";
 		    		    
 		    		    decision = $(this).attr('id');

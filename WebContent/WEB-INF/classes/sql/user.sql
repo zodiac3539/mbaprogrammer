@@ -37,6 +37,8 @@ CREATE TABLE bulletin (
     bcategory VARCHAR(255),
     subject VARCHAR(255),
     content NVARCHAR(4000),
-    userid VARCHAR(200)
+    userid VARCHAR(200),
+    filename VARCHAR(200),
+    realname VARCHAR(200)
 );
 

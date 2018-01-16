@@ -80,4 +80,20 @@
       <servlet-name>SignupServlet</servlet-name>
       <url-pattern>/memorize/SignupServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+      <servlet-name>BulletinList</servlet-name>
+      <servlet-class>grechoi.servlet.BulletingListServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>BulletinList</servlet-name>
+      <url-pattern>/bulletin/BulletinServlet</url-pattern>
+  </servlet-mapping>  
+  <servlet>
+      <servlet-name>BulletinWrite</servlet-name>
+      <servlet-class>grechoi.servlet.BulletinUpdateServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>BulletinWrite</servlet-name>
+      <url-pattern>/bulletin/UpdateBulServlet</url-pattern>
+  </servlet-mapping>
 </web-app>
