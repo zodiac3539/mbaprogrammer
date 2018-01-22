@@ -1,5 +1,9 @@
 package usertest;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class BulletinVO {
     //categoryseq BIGINT primary key,
     //bcategory VARCHAR(255),
@@ -12,13 +16,26 @@ public class BulletinVO {
     private String subject;
     private String content;
     private String userid;
-    
+    private String whenwritten;
+
+	public String getWhen() {
+		String ret = "";
+		long dates = Long.parseLong(this.whenwritten);
+		Calendar now = new GregorianCalendar();
+		now.setTimeInMillis(dates);
+		SimpleDateFormat format1 = new SimpleDateFormat("MM-dd-yyyy");
+		
+		ret = format1.format(now.getTime()).toString();
+		return ret;
+	}
+
     public long getCategoryseq() {
 		return categoryseq;
 	}
 	public void setCategoryseq(long categoryseq) {
 		this.categoryseq = categoryseq;
 	}
+
 	public String getBcategory() {
 		return bcategory;
 	}
@@ -43,7 +60,11 @@ public class BulletinVO {
 	public void setUserid(String userid) {
 		this.userid = userid;
 	}
-
-
-    
+	public String getWhenwritten() {
+		return whenwritten;
+	}
+	public void setWhenwritten(String whenwritten) {
+		this.whenwritten = whenwritten;
+	}
+	
 }

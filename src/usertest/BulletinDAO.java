@@ -19,6 +19,40 @@ CREATE TABLE bulletin (
 */
 
 public class BulletinDAO {
+
+    public void updateBulletin(BulletinVO bulletinVO) {
+    	Connection con = null;
+		PreparedStatement ptmt2 = null;
+		try {
+			DBCon dbcon = new DBCon();
+			con = dbcon.getConnection();
+			
+		    //categoryseq BIGINT primary key,
+		    //bcategory VARCHAR(255),
+		    //subject VARCHAR(255),
+		    //content NVARCHAR(4000),
+		    //userid VARCHAR(200),
+		    //filename VARCHAR(200),
+		    //realname VARCHAR(200)
+			
+			String sql = "UPDATE bulletin SET bcategory=?, subject=?, content=?"
+					+ " WHERE categoryseq=?";
+			ptmt2 = con.prepareStatement(sql);
+			
+			ptmt2.setString(1, bulletinVO.getBcategory());
+			ptmt2.setString(2, bulletinVO.getSubject());
+			ptmt2.setString(3, bulletinVO.getContent());
+			ptmt2.setLong(4, bulletinVO.getCategoryseq());
+			
+			ptmt2.executeUpdate();
+			
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			try { ptmt2.close(); } catch (Exception _e) {}
+			try { con.close(); } catch (Exception _e) {}
+		}
+    }
 	
     public void insertBulletin(BulletinVO bulletinVO) {
     	Connection con = null;
@@ -46,8 +80,8 @@ public class BulletinDAO {
 		    //filename VARCHAR(200),
 		    //realname VARCHAR(200)
 			
-			sql = "INSERT INTO memorize(categoryseq, bcategory, subject, content, userid, filename, realname)"
-					+ " VALUES(?, ?, ?, ?, ?, ?, ?)";
+			sql = "INSERT INTO bulletin(categoryseq, bcategory, subject, content, userid, filename, realname, whenwritten)"
+					+ " VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 			ptmt2 = con.prepareStatement(sql);
 			
 			ptmt2.setLong(1, seq);
@@ -57,6 +91,7 @@ public class BulletinDAO {
 			ptmt2.setString(5, bulletinVO.getUserid());
 			ptmt2.setString(6, ""); //filename
 			ptmt2.setString(7, ""); //realname
+			ptmt2.setString(8, "" + System.currentTimeMillis());
 			
 			ptmt2.executeUpdate();
 			
@@ -117,8 +152,8 @@ public class BulletinDAO {
 			DBCon dbcon = new DBCon();
 			con = dbcon.getConnection();
 			
-			String sql = "SELECT categoryseq, bcategory, subject, content, userid, filename, realname"
-					+ " FROM memorize"
+			String sql = "SELECT categoryseq, bcategory, subject, content, userid, filename, realname, whenwritten"
+					+ " FROM bulletin"
 					+ " WHERE categoryseq=?";
 			//BulletinVO
 			ptmt = con.prepareStatement(sql);
@@ -132,6 +167,8 @@ public class BulletinDAO {
 				ret.setSubject( rs.getString("subject") );
 				ret.setContent( rs.getString("content") );
 				ret.setUserid( rs.getString("userid") );
+				
+				ret.setWhenwritten( rs.getString("whenwritten") );
 			
 			}
 			
@@ -159,7 +196,7 @@ public class BulletinDAO {
 			DBCon dbcon = new DBCon();
 			con = dbcon.getConnection();
 			
-			String sql = "SELECT categoryseq, bcategory, subject, userid"
+			String sql = "SELECT categoryseq, bcategory, subject, userid, whenwritten"
 					+ " FROM bulletin"
 					//+ " WHERE userid=? AND categoryseq=?"
 					+ " ORDER BY categoryseq DESC LIMIT ?, 20";
@@ -177,6 +214,7 @@ public class BulletinDAO {
 				vo.setBcategory( rs.getString("bcategory") );
 				vo.setSubject(rs.getString("subject"));
 				vo.setUserid( rs.getString("userid") );
+				vo.setWhenwritten( rs.getString("whenwritten") );
 				
 				ret.add(vo);
 			}

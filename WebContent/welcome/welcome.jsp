@@ -21,6 +21,9 @@
   <BR>
   <a href="https://www.linkedin.com/in/seokbongchoi/" target="_blank">Go to Gregory Choi's LinkedIn page</a><BR><BR>
   <a href="https://github.com/zodiac3539/" target="_blank">Go to Gregory Choi's Github page</a><BR>
+  <BR>
+  The sun will rise again - Victor Hugo<BR>
+  <BR>
   <script src="../js/tools.js"></script>
   </div>
   </body>

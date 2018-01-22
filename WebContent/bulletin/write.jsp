@@ -30,7 +30,15 @@
       
       document.store.submit();
 
-  }    
+  }
+  function wordcounts() {
+	  var obj = document.store.content.value;
+	  if(obj == null) {
+		  return;
+	  }
+	  
+	  document.store.wordcount.value = obj.length;
+  }
   </script>
 </head>
   <body>
@@ -66,8 +74,14 @@ out.println("&nbsp;&nbsp;");
 <tr>
     <td bgcolor="#FFFFFF">
     Content: <BR/>
-    <textarea cols="80" rows="15" name="content"></textarea>
+    <textarea cols="80" rows="15" name="content" onkeyup="javascript:wordcounts()"></textarea>
     </td>
+</tr>
+<tr>
+    <td bgcolor="#FFFFFF">
+	<input type="text" name="wordcount" value="0"/>
+    </td>
+</tr>
 </table>
 <BR/><BR/>
 <input type="button" value="Save" onclick="save()"/>

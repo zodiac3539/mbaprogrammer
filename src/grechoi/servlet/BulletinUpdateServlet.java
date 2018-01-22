@@ -55,11 +55,28 @@ public class BulletinUpdateServlet extends HttpServlet {
 			vo.setBcategory(bcategory);
 			vo.setSubject(subject);
 			vo.setContent(content);
-			
+			vo.setUserid(userid);
 
 			dao.insertBulletin(vo);
 			response.sendRedirect("./BulletinServlet");
 
+		} else if(command.equals("update")) {
+			long categoryseq = Long.parseLong( request.getParameter("categoryseq") );
+			String bcategory = request.getParameter("bcategory");
+			String subject = request.getParameter("subject");
+			String content = request.getParameter("content");
+		
+			BulletinVO vo = new BulletinVO();
+
+			vo.setCategoryseq( categoryseq );
+			vo.setBcategory(bcategory);
+			vo.setSubject(subject);
+			vo.setContent(content);
+			vo.setUserid(userid);
+
+			dao.updateBulletin(vo);
+			response.sendRedirect("./view.jsp?categoryseq=" + categoryseq);
+		
 		}
 		//String cat = request.getParameter("categoryseq");
 		//if(cat == null) cat = "1";

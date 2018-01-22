@@ -39,6 +39,7 @@ CREATE TABLE bulletin (
     content NVARCHAR(4000),
     userid VARCHAR(200),
     filename VARCHAR(200),
-    realname VARCHAR(200)
+    realname VARCHAR(200),
+    whenwritten VARCHAR(200)
 );
 

@@ -55,7 +55,7 @@ if(!isLast) {
 out.println("<BR>Current Page: " + current_page);
 %>
 <BR><BR>
-<B>[List of your flash cards]</B>
+<B>[List]</B>
 <%
 Iterator<BulletinVO> it = ((List<BulletinVO>)request.getAttribute("list")).iterator();
 
@@ -65,14 +65,17 @@ Iterator<BulletinVO> it = ((List<BulletinVO>)request.getAttribute("list")).itera
 //int i=0;
 %>
 <BR>
-<table border="0" cellspacing="1" cellpadding="2" bgcolor="gray" width="600">
+<table border="0" cellspacing="1" cellpadding="2" bgcolor="gray" width="900">
 
 <tr>
-    <td bgcolor="#FFFFFF">Num</td>
-    <td bgcolor="#FFFFFF">Category</td>
-    <td bgcolor="#FFFFFF">Subject</td>
-    <td bgcolor="#FFFFFF">Writer</td>
+    <td bgcolor="#F0F8FF" align="center" width="10%">Num</td>
+    <td bgcolor="#F0F8FF" align="center" width="15%">Category</td>
+    <td bgcolor="#F0F8FF" align="center" width="35%">Subject</td>
+    <td bgcolor="#F0F8FF" align="center" width="15%">Writer</td>
+    <td bgcolor="#F0F8FF" align="center" width="15%">Date</td>
 </tr>
+
+
 <!-- Iteration Start -->
 <%
 if(!it.hasNext()) {
@@ -82,7 +85,24 @@ if(!it.hasNext()) {
 }
 int i=0;
 %>
+<%
+    while(it.hasNext()) {
+        BulletinVO currentVO = it.next();
+%>
+<tr>
+    <td bgcolor="#FFFFFF"><%=currentVO.getCategoryseq() %></td>
+    <td bgcolor="#FFFFFF"><%=currentVO.getBcategory() %></td>
+    <td bgcolor="#FFFFFF">
+        <a href="./view.jsp?categoryseq=<%=currentVO.getCategoryseq() %>">
+        <%=currentVO.getSubject() %></a>
+    </td>
+    <td bgcolor="#FFFFFF"><%=currentVO.getUserid() %></td>
+    <td bgcolor="#FFFFFF"><%=currentVO.getWhen() %></td>
+</tr>    
+<% } // while %>
 <!-- Iteration Ends -->
+
+
 </table>
   
   <BR><BR>
@@ -94,7 +114,11 @@ int i=0;
    %>
           <BR>
           <a href = "./write.jsp">Write a post</a>
-          <BR> 
+          <BR>
+          <BR>
+          <a href = "./upload.jsp">Upload files</a>
+          <BR>
+           
    <%
       }
    %>
