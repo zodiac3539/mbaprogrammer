@@ -22,7 +22,7 @@
       position: absolute;
       left: 100px;
       top: 150px;
-      width: 600px%;
+      width: 1200px;
       height: 280px;
       margin: 20px auto;
       border: 2px solid gray;
@@ -198,7 +198,7 @@ out.println("&nbsp;&nbsp;");
 <a href="./LogoutServlet"><img src="../img/signout.png"></a>
 <a href="javascript:cleanup();"><img src="../img/cleanup.png"/></a>
 <BR><BR>
-<div id="insert"><B>[Insert new data]</B></div><BR>
+<div id="insert"><B>Insert new data</B></div><BR>
 <form name="store" action="./UpdateMemServlet">
     <input type="hidden" name="command" value="insert"/>
     <input type="hidden" name="like" value="1"/>
@@ -207,13 +207,13 @@ out.println("&nbsp;&nbsp;");
 <tr>
     <td bgcolor="#FFFFFF">
     Question: <BR/>
-    <textarea cols="80" rows="3" name="question"></textarea>
+    <textarea cols="120" rows="3" name="question"></textarea>
     </td>
 </tr>
 <tr>
     <td bgcolor="#FFFFFF">
     Answer: <BR/>
-    <textarea cols="80" rows="3" name="answer"></textarea>
+    <textarea cols="120" rows="6" name="answer"></textarea>
     </td>
 </table>
 <BR/><BR/>
@@ -262,7 +262,7 @@ while(it.hasNext()) {
 	MemorizeVO vo = it.next();
 %>
 <BR>
-<table border="0" cellspacing="1" cellpadding="2" bgcolor="gray" width="600">
+<table border="0" cellspacing="1" cellpadding="2" bgcolor="gray" width="1200">
 <tr>
     <td bgcolor="#FFFFFF">
     <font color="gray">Question:</font> &nbsp;&nbsp;&nbsp;<a id="show<%=i%>" style="color:green; cursor:pointer" onclick="showanswer('<%=i%>', '<%=vo.getSeq() %>')">[Show]</a><BR/>

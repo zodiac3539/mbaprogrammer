@@ -65,7 +65,7 @@ Iterator<BulletinVO> it = ((List<BulletinVO>)request.getAttribute("list")).itera
 //int i=0;
 %>
 <BR>
-<table border="0" cellspacing="1" cellpadding="2" bgcolor="gray" width="900">
+<table border="0" cellspacing="1" cellpadding="2" bgcolor="gray" width="1200">
 
 <tr>
     <td bgcolor="#F0F8FF" align="center" width="10%">Num</td>

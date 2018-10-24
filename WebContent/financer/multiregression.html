@@ -3,14 +3,20 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
   <title>MBA Programmer - Gregory Choi</title>
+  
+  <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 </head>
   <body>
   <div id="menu"></div><BR>
   <div id="body">
-  
+<BR>
 <b>[Previous Post]</b><br />
 <a href="./singleregression.html">Single regression on Exxon's stock</a><br />
 <br />
@@ -58,96 +64,102 @@ I really want to be nice, so that I uploaded WTI oil price and natural gas price
 (4) As I mentioned earlier, you can use WTI and Natural gas data without changing URL. Don't download from the internet. Just use the code.<br />
 <br />
 <b>[Code]</b><br />
-<span style="color: #274e13;">#Gas: https://docs.google.com/spreadsheets/d/1-mMwoHJNrv9_St2x9xMlcNjs-NGKfJ32KOKRHixMZMk/pub?gid=0&amp;single=true&amp;output=csv</span><br />
-<span style="color: #274e13;">#WTI: https://docs.google.com/spreadsheets/d/19kE1nLp5u4Zf2UiZA4-GW0gYhdMvWU60L2M-SIbYqX0/pub?gid=0&amp;single=true&amp;output=csv</span><br />
+<BR>
+<pre>
+<code>
+#Gas: https://docs.google.com/spreadsheets/d/1-mMwoHJNrv9_St2x9xMlcNjs-NGKfJ32KOKRHixMZMk/pub?gid=0&single=true&output=csv
+#WTI: https://docs.google.com/spreadsheets/d/19kE1nLp5u4Zf2UiZA4-GW0gYhdMvWU60L2M-SIbYqX0/pub?gid=0&single=true&output=csv
+
+#Multi Regression and Correlation
+
+library(tseries)
+library(zoo)
+
+#Exxon Mobil's equity value in 2015
+xom <- get.hist.quote("XOM", #Tick mark
+    start="2015-01-01", #Start date YYYY-MM-DD
+    end="2015-12-31" #End date YYYY-MM-DD
+)
+#S&P 500. I used Vanguard Index Fund instead of directly using S&P.
+snp <- get.hist.quote("VFINX", #Tick mark
+    start="2015-01-01", #Start date YYYY-MM-DD
+    end="2015-12-31" #End date YYYY-MM-DD
+)
+
+#I am going to use close value only
+xom_zoo <- xom$Close
+snp_zoo <- snp$Close
+
+#Please check the post that mentions how to get the data from Google Sheet.
+wti <- read.csv("https://docs.google.com/spreadsheets/d/19kE1nLp5u4Zf2UiZA4-GW0gYhdMvWU60L2M-SIbYqX0/pub?gid=0&single=true&output=csv")
+
+#When it reads file first, it has categorical format we need to convert it.
+wti$VALUE <- as.character(wti$VALUE)
+#It also has garbage value "." in data. You can see in Excel. We can clean this with below command
+wti <- wti[wti$VALUE!=".", #Get rid of any value that contains "."
+       1:2 #I need first column, and second column as well.
+       ]
+
+#Finally I want to convert character to numeric value.
+wti$VALUE <- as.numeric(wti$VALUE)
+wti_zoo <- read.zoo(wti, format="%m/%d/%Y")
+
+gas <- read.csv(url("https://docs.google.com/spreadsheets/d/1-mMwoHJNrv9_St2x9xMlcNjs-NGKfJ32KOKRHixMZMk/pub?gid=0&single=true&output=csv"))
+gas$Price <- as.character(gas$Price)
+gas$Price <- as.numeric(gas$Price)
+gas_zoo <- read.zoo(gas, format="%m/%d/%Y")
+
+#Combine Two Time Series
+two <- cbind(wti_zoo, snp_zoo)
+three <- cbind(gas_zoo, two)
+#Remove NA as S&P 500 has more trade days than normal stock.
+three.f <- na.omit(three)
+
+#What we need is return.
+xom_rate <- (xom_zoo - lag(xom_zoo))/xom_zoo
+wti_rate <- (three.f$wti_zoo - lag(three.f$wti_zoo))/three.f$wti_zoo
+snp_rate <- (three.f$snp_zoo - lag(three.f$snp_zoo))/three.f$snp_zoo
+gas_rate <- (three.f$gas_zoo - lag(three.f$gas_zoo))/three.f$gas_zoo
+regression_result <- lm(xom_rate~wti_rate+snp_rate+gas_rate)
+
+print(summary(regression_result))
+
+cols<-rainbow(4)
+
+#Draw Time Series Graph
+#lty: Line Style
+plot(xom_rate, col=cols[1], lty=1, main="Return of XOM, WTI, S&P500, Gas", xlab="2015", ylab="Return")
+lines(wti_rate, col=cols[2], lty=2)
+lines(snp_rate, col=cols[3], lty=2)
+lines(gas_rate, col=cols[4], lty=2)
+legend('bottomleft', #It's located in bottom left
+    c("XOM", "WTI", "S&P", "Gas"),
+    lty=c(1,4), #As this is a line graph, we are going to use line as a symbol
+    col=cols, #color
+    horiz=TRUE, #Horizontal alignment
+    bty='n', #No background
+    cex=0.65 #If it is 1.0 it's too big. Basically it is a scale factor
+)
+
+#Scatter plot for multi regression
+#pch: Dot Style
+plot(x=xom_rate, y=gas_rate, col=cols[1], pch=17, main="Scatter plot on return", xlab="XOM", ylab="Gas, S&P, WTI")
+points(x=xom_rate, y=snp_rate, col=cols[2], pch=18)
+points(x=xom_rate, y=wti_rate, col=cols[3], pch=19)
+legend('bottomleft',
+    #X, #Y position of the legend. The higher Y value, the higher position in the monitor.
+    c("GAS", "S&P", "WTI"),
+    pch=c(17, 18, 19), #As this is a line graph, we are going to use line as a symbol
+    col=cols, #color
+    horiz=TRUE, #Horizontal alignment
+    bty='n', #No background
+    cex=0.65 #If it is 1.0 it's too big. Basically it is a scale factor
+)
+</code>
+</pre>
+
+<br>
 <br />
-#Multi Regression and Correlation<br />
-<br />
-library(tseries)<br />
-library(zoo)<br />
-<br />
-<span style="color: #274e13;">#Exxon Mobil's equity value in 2015</span><br />
-xom &lt;- get.hist.quote("XOM", #Tick mark<br />
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; start="2015-01-01", #Start date YYYY-MM-DD<br />
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; end="2015-12-31" #End date YYYY-MM-DD<br />
-)<br />
-<span style="color: #274e13;">#S&amp;P 500. I used Vanguard Index Fund instead of directly using S&amp;P.</span><br />
-snp &lt;- get.hist.quote("VFINX", #Tick mark<br />
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; start="2015-01-01", #Start date YYYY-MM-DD<br />
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; end="2015-12-31" #End date YYYY-MM-DD<br />
-)<br />
-<br />
-<span style="color: #274e13;">#I am going to use close value only</span><br />
-xom_zoo &lt;- xom$Close<br />
-snp_zoo &lt;- snp$Close<br />
-<br />
-<span style="color: #274e13;">#Please check the post that mentions how to get the data from Google Sheet.</span><br />
-wti &lt;- read.csv("https://docs.google.com/spreadsheets/d/19kE1nLp5u4Zf2UiZA4-GW0gYhdMvWU60L2M-SIbYqX0/pub?gid=0&amp;single=true&amp;output=csv")<br />
-<br />
-<span style="color: #274e13;">#When it reads file first, it has categorical format we need to convert it.</span><br />
-wti$VALUE &lt;- as.character(wti$VALUE)<br />
-<span style="color: #274e13;">#It also has garbage value "." in data. You can see in Excel. We can clean this with below command</span><br />
-wti &lt;- wti[wti$VALUE!=".", <span style="color: #274e13;">#Get rid of any value that contains "."</span><br />
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1:2 <span style="color: #274e13;">#I need first column, and second column as well.</span><br />
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;]<br />
-<span style="color: #274e13;">#Finally I want to convert character to numeric value.</span><br />
-wti$VALUE &lt;- as.numeric(wti$VALUE)<br />
-wti_zoo &lt;- read.zoo(wti, format="%m/%d/%Y")<br />
-<br />
-gas &lt;- read.csv(url("https://docs.google.com/spreadsheets/d/1-mMwoHJNrv9_St2x9xMlcNjs-NGKfJ32KOKRHixMZMk/pub?gid=0&amp;single=true&amp;output=csv"))<br />
-gas$Price &lt;- as.character(gas$Price)<br />
-gas$Price &lt;- as.numeric(gas$Price)<br />
-gas_zoo &lt;- read.zoo(gas, format="%m/%d/%Y")<br />
-<br />
-<span style="color: #274e13;">#Combine Two Time Series</span><br />
-two &lt;- cbind(wti_zoo, snp_zoo)<br />
-three &lt;- cbind(gas_zoo, two)<br />
-<span style="color: #274e13;">#Remove NA as S&amp;P 500 has more trade days than normal stock.</span><br />
-three.f &lt;- na.omit(three)<br />
-<br />
-<span style="color: #274e13;">#What we need is return.</span><br />
-xom_rate &lt;- (xom_zoo - lag(xom_zoo))/xom_zoo<br />
-wti_rate &lt;- (three.f$wti_zoo - lag(three.f$wti_zoo))/three.f$wti_zoo<br />
-snp_rate &lt;- (three.f$snp_zoo - lag(three.f$snp_zoo))/three.f$snp_zoo<br />
-gas_rate &lt;- (three.f$gas_zoo - lag(three.f$gas_zoo))/three.f$gas_zoo<br />
-regression_result &lt;- lm(xom_rate~wti_rate+snp_rate+gas_rate)<br />
-<br />
-print(summary(regression_result))<br />
-<br />
-cols&lt;-rainbow(4)<br />
-<br />
-<span style="color: #274e13;">#Draw Time Series Graph</span><br />
-<span style="color: #274e13;">#lty: Line Style</span><br />
-plot(xom_rate, col=cols[1], lty=1, main="Return of XOM, WTI, S&amp;P500, Gas", xlab="2015", ylab="Return")<br />
-lines(wti_rate, col=cols[2], lty=2)<br />
-lines(snp_rate, col=cols[3], lty=2)<br />
-lines(gas_rate, col=cols[4], lty=2)<br />
-legend('bottomleft', #It's located in bottom left<br />
-&nbsp; &nbsp; &nbsp; &nbsp;c("XOM", "WTI", "S&amp;P", "Gas"),<br />
-&nbsp; &nbsp; &nbsp; &nbsp;lty=c(1,4), #As this is a line graph, we are going to use line as a symbol<br />
-&nbsp; &nbsp; &nbsp; &nbsp;col=cols, #color<br />
-&nbsp; &nbsp; &nbsp; &nbsp;horiz=TRUE, #Horizontal alignment<br />
-&nbsp; &nbsp; &nbsp; &nbsp;bty='n', #No background<br />
-&nbsp; &nbsp; &nbsp; &nbsp;cex=0.65 #If it is 1.0 it's too big. Basically it is a scale factor<br />
-)<br />
-<div>
-<br /></div>
-<span style="color: #274e13;">#Scatter plot for multi regression</span><br />
-<span style="color: #274e13;">#pch: Dot Style</span><br />
-plot(x=xom_rate, y=gas_rate, col=cols[1], pch=17, main="Scatter plot on return", xlab="XOM", ylab="Gas, S&amp;P, WTI")<br />
-points(x=xom_rate, y=snp_rate, col=cols[2], pch=18)<br />
-points(x=xom_rate, y=wti_rate, col=cols[3], pch=19)<br />
-legend('bottomleft',<br />
-&nbsp; &nbsp; &nbsp; &nbsp;#X, #Y position of the legend. The higher Y value, the higher position in the monitor.<br />
-&nbsp; &nbsp; &nbsp; &nbsp;c("GAS", "S&amp;P", "WTI"),<br />
-&nbsp; &nbsp; &nbsp; &nbsp;pch=c(17, 18, 19), #As this is a line graph, we are going to use line as a symbol<br />
-&nbsp; &nbsp; &nbsp; &nbsp;col=cols, #color<br />
-&nbsp; &nbsp; &nbsp; &nbsp;horiz=TRUE, #Horizontal alignment<br />
-&nbsp; &nbsp; &nbsp; &nbsp;bty='n', #No background<br />
-&nbsp; &nbsp; &nbsp; &nbsp;cex=0.65 #If it is 1.0 it's too big. Basically it is a scale factor<br />
-)<br />
-<div>
-<br /></div>
 <b>[How to interpret the result]</b><br />
 <br />
 &lt;Table&gt;<br />

@@ -2,11 +2,15 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="usertest.ScrapDAO" %>
 <%@ page import="usertest.ScrapVO" %>
+<%@ page import="usertest.BitcoinVO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Iterator" %>
+
 <%
     ScrapDAO dao = new ScrapDAO();
 	List<ScrapVO> ret = dao.getRecentFive();
+	
+	BitcoinVO bitcoinVO = dao.getRecentBitcoin();
 	
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -114,13 +118,16 @@
   <body>
   <div id="menu"></div><BR>
   <div id="body">
-    <div id="output" style="font-size: 20pt;">Current USD-KRW : <%=current%></div><BR>
     <BR>
-    <div id="curve_chart" style="width: 800px; height: 400px"></div><BR>
+    <div id="bitcoin" style="font-size: 15pt;">Current Bitcoin-USD : <%=bitcoinVO.getDollar() %> (<%=bitcoinVO.getWhen() %>)</div><BR>
     <BR>
-    <div id="output" style="font-size: 20pt;">Current USD-EUR : <%=currenteur%></div><BR>
+    <div id="output" style="font-size: 15pt;">Current USD-KRW : <%=current%></div><BR>
     <BR>
-    <div id="curve_chart2" style="width: 800px; height: 400px"></div><BR>
+    <div id="curve_chart" style="width: 900px; height: 350px"></div><BR>
+    <BR>
+    <div id="output" style="font-size: 15pt;">Current USD-EUR : <%=currenteur%></div><BR>
+    <BR>
+    <div id="curve_chart2" style="width: 900px; height: 350px"></div><BR>
     <BR>
     <div id="progressbar" style="width: 900px;"></div>
     <BR>
