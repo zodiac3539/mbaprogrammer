@@ -7,11 +7,11 @@ console.log('init!');
 var bases = '..';
 
 	    str = '';
-	    str = str + '<Table width=100% bgcolor=#000099 class=mainmenu><tr><td>';
+	    str = str + '<Table width=100% height=50 bgcolor=#000099 class=mainmenu><tr><td>';
 	    str = str + '<a id=\"menu01\" class=\"customlink\">Home</a>';
 	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	    str = str + '<a id=\"menu02\" class=\"customlink\">Foreign Exchange</a>';
-	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	    //str = str + '<a id=\"menu02\" class=\"customlink\">Foreign Exchange</a>';
+	    //str = str + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	    str = str + '<a id=\"menu03\" class=\"customlink\">Finance R Repository</a>';
 	    str = str + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	    str = str + '<a id=\"menu04\" class=\"customlink\">Calculator</a>';
@@ -31,7 +31,11 @@ var bases = '..';
 	    str = str + '';
 	    
 	    $("#menu").html( str );
-	    (adsbygoogle = window.adsbygoogle || []).push({});
+	    try {
+		    (adsbygoogle = window.adsbygoogle || []).push({});	    	
+	    } catch(err) {
+	    	console.log(err);
+	    }
 
 	    var cssId = 'myCss';  // you could encode the css path itself to generate id..
 	    if (!document.getElementById(cssId))
@@ -55,10 +59,20 @@ var bases = '..';
 	    	$(str_temp).mouseover (
 		    		function() {
 		    			$(this).css('cursor', 'pointer');
-		    			$(this).effect("highlight", {color: '#ffff66'}, 500);
+		    			$(this).fadeOut(100);
+		    			$(this).fadeIn(200);
+		    			$(this).css('color', '#CCCCCC');
 		    		}
 		    )
+		    
+	    	$(str_temp).mouseout (
+	    			function() {
+		    			$(this).fadeOut(200);
+		    			$(this).fadeIn(100);
 
+	    				$(this).css('color', '#FFFFFF');
+	    			}
+	    	)
 		    
 	    	$(str_temp).click (
 		    		function() {

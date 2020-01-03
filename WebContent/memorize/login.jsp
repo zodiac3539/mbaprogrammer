@@ -62,7 +62,13 @@ if(msg != null) {
 
 </form>
 
-  <script src="../js/tools.js"></script>
-  </div>
+	<script type="text/javascript" language="javascript">  
+    var versionUpdate = (new Date()).getTime();  
+    var script = document.createElement("script");  
+    script.type = "text/javascript";  
+    script.src = "../js/tools.js?v=" + versionUpdate;  
+    document.body.appendChild(script);  
+	</script> 
+</div>
   </body>
 </html>
